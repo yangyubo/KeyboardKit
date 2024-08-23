@@ -20,6 +20,19 @@ KeyboardKit 9 is planned to be released shortly after the public release of iOS 
 
 
 
+## 8.9
+
+This version continues to reduce the SDK surface area and to rename types to make things more consistent for the 9.0 release.
+
+### 💡 Adjustments
+
+* `Color` extensions are now moved to the `Styling` namespace.
+* `Image` extensions are now moved to the `Styling` namespace.
+
+
+
+
+
 ## 8.8.2
 
 This version fixes a keyboard button gesture bug.

@@ -8,12 +8,7 @@
 
 import SwiftUI
 
-/**
- This enum defines raw, keyboard-specific asset-based colors.
-
- Instead of using this type directly, you should instead use
- the keyboard-specific `Color` extensions.
- */
+/// This enum defines keyboard-specific, asset-based colors.
 enum KeyboardColor: String, CaseIterable, Identifiable {
     
     /// The standard keyboard background color.
