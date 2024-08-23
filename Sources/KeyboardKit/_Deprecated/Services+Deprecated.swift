@@ -87,5 +87,5 @@ public typealias iPhoneKeyboardLayoutProvider = KeyboardLayout.iPhoneService
 @available(*, deprecated, renamed: "KeyboardLayout.StandardService")
 public typealias StandardKeyboardLayoutProvider = KeyboardLayout.StandardService
 
-@available(*, deprecated, renamed: "KeyboardStyle.StandardProvider")
-public typealias StandardKeyboardStyleProvider = KeyboardStyle.StandardProvider
+@available(*, deprecated, renamed: "KeyboardStyle.StandardService")
+public typealias StandardKeyboardStyleProvider = KeyboardStyle.StandardService

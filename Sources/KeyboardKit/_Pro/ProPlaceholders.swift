@@ -218,8 +218,8 @@ public extension KeyboardStyle {
     class ThemeBasedProvider {}
 }
 
-public extension KeyboardStyleProvider {
-    
+public extension KeyboardStyleService {
+
     /// 👑 This is unlocked by KeyboardKit Pro.
     static func themed(
         with theme: KeyboardTheme,
@@ -232,8 +232,8 @@ public extension KeyboardStyleProvider {
     static func themed(
         with theme: KeyboardTheme,
         keyboardContext: KeyboardContext,
-        fallback: KeyboardStyleProvider
-    ) -> any KeyboardStyleProvider {
+        fallback: KeyboardStyleService
+    ) -> any KeyboardStyleService {
         fallback
     }
 }
@@ -312,8 +312,8 @@ public protocol SpeechRecognizer {}
 /// 👑 This is unlocked by KeyboardKit Pro.
 public struct KeyboardViewPreview {}
 
-@available(*, deprecated, renamed: "KeyboardStyle.ThemeBasedProvider")
-public typealias ThemeBasedKeyboardStyleProvider = KeyboardStyle.StandardProvider
+@available(*, deprecated, renamed: "KeyboardStyle.ThemeBasedService")
+public typealias ThemeBasedKeyboardStyleProvider = KeyboardStyle.StandardService
 
 #if os(iOS) || os(tvOS) || os(visionOS)
 public extension UITextDocumentProxy {

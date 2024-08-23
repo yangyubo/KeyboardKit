@@ -13,14 +13,22 @@ public extension Emoji {
     /// This view is used as a keyboard emoji view eraser to
     /// ensure that the view is only used for valid licenses.
     struct KeyboardWrapper: View {
-        
+
         init(
             actionHandler: KeyboardActionHandler,
             keyboardContext: KeyboardContext,
             calloutContext: CalloutContext?,
-            styleProvider: KeyboardStyleProvider
+            styleService: KeyboardStyleService
         ) {}
-        
+
+        @available(*, deprecated, message: "Use the style service initializer instead.")
+        init(
+            actionHandler: KeyboardActionHandler,
+            keyboardContext: KeyboardContext,
+            calloutContext: CalloutContext?,
+            styleProvider: KeyboardStyleService
+        ) {}
+
         public var body: some View {
             EmptyView()
         }

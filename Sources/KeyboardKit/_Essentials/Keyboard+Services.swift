@@ -83,8 +83,8 @@ public extension Keyboard {
             action: { _ in }
         )
 
-        /// The keyboard style provider to use.
-        public lazy var styleProvider: KeyboardStyleProvider = KeyboardStyle.StandardProvider(
+        /// The keyboard style service to use.
+        public lazy var styleService: KeyboardStyleService = KeyboardStyle.StandardService(
             keyboardContext: state.keyboardContext
         )
 

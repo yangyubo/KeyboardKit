@@ -27,7 +27,7 @@ public extension Keyboard {
         /// - Parameters:
         ///   - action: The keyboard action to apply.
         ///   - actionHandler: The action handler to use.
-        ///   - styleProvider: The style provider to use.
+        ///   - styleService: The style service to use.
         ///   - keyboardContext: The keyboard context to which the button should apply.
         ///   - calloutContext: The callout context to affect, if any.
         ///   - edgeInsets: The edge insets to apply to the interactable area, if any.
@@ -36,7 +36,7 @@ public extension Keyboard {
         public init(
             action: KeyboardAction,
             actionHandler: KeyboardActionHandler,
-            styleProvider: KeyboardStyleProvider,
+            styleService: KeyboardStyleService,
             keyboardContext: KeyboardContext,
             calloutContext: CalloutContext?,
             edgeInsets: EdgeInsets = .init(),
@@ -45,7 +45,7 @@ public extension Keyboard {
         ) {
             self.action = action
             self.actionHandler = actionHandler
-            self.styleProvider = styleProvider
+            self.styleService = styleService
             self.keyboardContext = keyboardContext
             self.calloutContext = calloutContext
             self.edgeInsets = edgeInsets
@@ -58,7 +58,7 @@ public extension Keyboard {
         /// - Parameters:
         ///   - action: The keyboard action to apply.
         ///   - actionHandler: The action handler to use.
-        ///   - styleProvider: The style provider to use.
+        ///   - styleService: The style service to use.
         ///   - keyboardContext: The keyboard context to which the button should apply.
         ///   - calloutContext: The callout context to affect, if any.
         ///   - edgeInsets: The edge insets to apply to the interactable area, if any.
@@ -66,7 +66,7 @@ public extension Keyboard {
         public init(
             action: KeyboardAction,
             actionHandler: KeyboardActionHandler,
-            styleProvider: KeyboardStyleProvider,
+            styleService: KeyboardStyleService,
             keyboardContext: KeyboardContext,
             calloutContext: CalloutContext?,
             edgeInsets: EdgeInsets = .init(),
@@ -75,7 +75,7 @@ public extension Keyboard {
             self.init(
                 action: action,
                 actionHandler: actionHandler,
-                styleProvider: styleProvider,
+                styleService: styleService,
                 keyboardContext: keyboardContext,
                 calloutContext: calloutContext,
                 edgeInsets: edgeInsets,
@@ -86,7 +86,7 @@ public extension Keyboard {
         
         private let action: KeyboardAction
         private let actionHandler: KeyboardActionHandler
-        private let styleProvider: KeyboardStyleProvider
+        private let styleService: KeyboardStyleService
         private let keyboardContext: KeyboardContext
         private let calloutContext: CalloutContext?
         private let edgeInsets: EdgeInsets
@@ -110,6 +110,52 @@ public extension Keyboard {
                     isPressed: isPressed ?? $isPressedInternal
                 )
         }
+
+
+        // MARK: - Deprecated
+
+        @available(*, deprecated, message: "Use the styleService initializer instead.")
+        public init(
+            action: KeyboardAction,
+            actionHandler: KeyboardActionHandler,
+            styleProvider: KeyboardStyleService,
+            keyboardContext: KeyboardContext,
+            calloutContext: CalloutContext?,
+            edgeInsets: EdgeInsets = .init(),
+            isPressed: Binding<Bool>? = nil,
+            @ViewBuilder content: @escaping ContentBuilder
+        ) {
+            self.action = action
+            self.actionHandler = actionHandler
+            self.styleService = styleProvider
+            self.keyboardContext = keyboardContext
+            self.calloutContext = calloutContext
+            self.edgeInsets = edgeInsets
+            self.isPressed = isPressed
+            self.content = content
+        }
+
+        @available(*, deprecated, message: "Use the styleService initializer instead.")
+        public init(
+            action: KeyboardAction,
+            actionHandler: KeyboardActionHandler,
+            styleProvider: KeyboardStyleService,
+            keyboardContext: KeyboardContext,
+            calloutContext: CalloutContext?,
+            edgeInsets: EdgeInsets = .init(),
+            isPressed: Binding<Bool>? = nil
+        ) where Content == Keyboard.ButtonContent {
+            self.init(
+                action: action,
+                actionHandler: actionHandler,
+                styleService: styleProvider,
+                keyboardContext: keyboardContext,
+                calloutContext: calloutContext,
+                edgeInsets: edgeInsets,
+                isPressed: isPressed,
+                content: { $0 }
+            )
+        }
     }
 }
 
@@ -119,14 +165,14 @@ private extension Keyboard.Button {
         content(
             Keyboard.ButtonContent(
                 action: action,
-                styleProvider: styleProvider,
+                styleService: styleService,
                 keyboardContext: keyboardContext
             )
         )
     }
     
     var style: Keyboard.ButtonStyle {
-        styleProvider.buttonStyle(
+        styleService.buttonStyle(
             for: action,
             isPressed: isPressed?.wrappedValue ?? isPressedInternal
         )
@@ -144,7 +190,7 @@ private extension Keyboard.Button {
             Keyboard.Button(
                 action: action,
                 actionHandler: .preview,
-                styleProvider: .preview,
+                styleService: .preview,
                 keyboardContext: .preview,
                 calloutContext: .preview
             ) {
@@ -163,7 +209,7 @@ private extension Keyboard.Button {
                 Keyboard.Button(
                     action: .emoji(.init("😀")),
                     actionHandler: .preview,
-                    styleProvider: .preview,
+                    styleService: .preview,
                     keyboardContext: .preview,
                     calloutContext: .preview,
                     edgeInsets: .init(top: 10, leading: 20, bottom: 30, trailing: 0),
