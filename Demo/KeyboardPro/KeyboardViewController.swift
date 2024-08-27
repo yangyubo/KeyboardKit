@@ -72,10 +72,10 @@ class KeyboardViewController: KeyboardInputViewController {
         ///
         /// Themes are powerful ways to specify styles for a
         /// keyboard. You can insert any theme below.
-        services.styleProvider = .themed(
+        services.styleService = .themed(
             with: .standard,
             keyboardContext: state.keyboardContext,
-            fallback: services.styleProvider
+            fallback: services.styleService
         )
     }
 }
