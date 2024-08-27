@@ -192,8 +192,9 @@ public struct KeyboardView<
             keyboardView
         }
         .autocorrectionDisabled(with: autocompleteContext)
-        .opacity(shouldShowEmojiKeyboard ? 0 : 1)
+        .opacity(shouldShowKeyboard ? 1 : 0)
         .overlay(emojiKeyboard, alignment: .bottom)
+        .overlay(numberPad, alignment: .bottom)
         .foregroundColor(styleService.foregroundColor)
         .background(renderBackground ? styleService.backgroundStyle : nil)
         .keyboardCalloutContainer(
@@ -226,10 +227,11 @@ private extension KeyboardView {
         )
     }
     
-    var shouldShowEmojiKeyboard: Bool {
+    var shouldShowKeyboard: Bool {
         switch keyboardContext.keyboardType {
-        case .emojis: true
-        default: false
+        case .emojis: false
+        case .numberPad: false
+        default: true
         }
     }
 }
@@ -258,12 +260,12 @@ private extension KeyboardView {
         .frame(height: layout.totalHeight)
         .id(keyboardContext.locale.identifier)
     }
-    
+
     @ViewBuilder
     var emojiKeyboard: some View {
         emojiKeyboardContent
             .id(keyboardContext.interfaceOrientation)           // TODO: Temp orientation fix
-            .opacity(shouldShowEmojiKeyboard ? 1 : 0)
+            .opacity(keyboardContext.keyboardType == .emojis ? 1 : 0)
     }
 
     @ViewBuilder
@@ -281,6 +283,17 @@ private extension KeyboardView {
         } else {
             Color.clear
         }
+    }
+
+    @ViewBuilder
+    var numberPad: some View {
+        Keyboard.NumberPad(
+            actionHandler: actionHandler,
+            styleService: styleService,
+            keyboardContext: keyboardContext
+        )
+        .padding(10)
+        .opacity(keyboardContext.keyboardType == .numberPad ? 1 : 0)
     }
 
     var toolbar: some View {
