@@ -14,7 +14,7 @@ final class AutocompleteContextTests: XCTestCase {
     let context = AutocompleteContext()
 
     func testCanGetNextCharacterProbabilityForStringsAndActions() {
-        context.nextCharacterPredictions = [
+        context.nextCharacterProbabilities = [
             "a": 0.1,
             "b": 0.2
         ]

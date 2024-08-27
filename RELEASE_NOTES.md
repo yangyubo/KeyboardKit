@@ -24,6 +24,7 @@ This version continues to reduce the SDK surface area and to rename types to mak
 
 ### ✨ Features
 
+* `Keyboard.NumberPad` is a new number pad keyboard component view.
 * `KeyboardView` now applies next character probabilities to its items.
 * `KeyboardViewItem` now applies next character probability to the button modifier. 
 * `View+KeyboardButton` now supports applying an extended tap area, which also affects z-index.

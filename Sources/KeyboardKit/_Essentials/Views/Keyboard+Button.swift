@@ -18,8 +18,9 @@ public extension Keyboard {
     /// You can use an optional `contentConfig` view builder
     /// to customize or replace the button content view.
     ///
-    /// You can turn any view into a button, by applying the
-    /// `.keyboardButton(...)` view modifier.
+    /// > Information: You'll be able to style the view with
+    /// by applying a ``Keyboard/ButtonStyle`` modifier, but
+    /// this won't be implemented until KeyboardKit 9.0.
     struct Button<Content: View>: View {
         
         /// Create a keyboard button.

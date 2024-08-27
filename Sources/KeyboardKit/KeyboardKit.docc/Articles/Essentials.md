@@ -13,9 +13,9 @@ This article describes the essential parts of KeyboardKit.
     @PageColor(blue)
 }
 
-KeyboardKit extends Apple's native APIs and provides you with a lot more functionality. It lets you mimic the native iOS keyboard and tweak its style and behavior, or create completely custom keyboards.
+KeyboardKit extends Apple's native keyboard APIs and provides you with a lot more functionality. It lets you mimic a native iOS keyboard and tweak its style and behavior, or create completely custom keyboards.
 
-KeyboardKit also has a ``KeyboardView`` view that mimics the native iOS keyboard. It can be customized and styled to great extent, and be customized with any views you like.
+KeyboardKit has a ``KeyboardView`` view that mimics the native iOS keyboard. It can be customized and styled to great extent, and lets you replace any key content or key view of any action.
 
 👑 [KeyboardKit Pro][Pro] unlocks a lot of essential Pro features. Information about Pro features can be found at the end of this article.
 
@@ -35,7 +35,7 @@ Namespaces will not contain protocols, nor important types that are meant to be 
 
 ## Keyboard Namespace
 
-The ``Keyboard`` namespace contains a lot of essential, keyboard-related types and views. By typing ``Keyboard`` and `.`, Xcode will list all essential types within this namespace.
+The ``Keyboard`` namespace contains a lot of essential, keyboard-related types and views. By typing `Keyboard.`, Xcode will list all essential types within this namespace.
 
 The namespace has a lot of essential types, like ``Keyboard/Accent``, ``Keyboard/AutocapitalizationType``, ``Keyboard/BackspaceRange``, ``Keyboard/Case``, ``Keyboard/Diacritic``, ``Keyboard/Gesture``, ``Keyboard/InputToolbarDisplayMode``, ``Keyboard/KeyboardType``, ``Keyboard/ReturnKeyType``, etc.
 
@@ -149,7 +149,7 @@ The ``Keyboard`` namespace has a lot of views, styles, and view-related types:
         }
     }
     
-    @Tab("Keyboard Button") {
+    @Tab("Button") {
         
         The ``Keyboard`` namespace has a set of keyboard ``Keyboard/Button`` views and styles that can be used to mimic all parts of a native keyboard, as well as their gestures. The ``Keyboard/Button`` renders the full button, while other views like ``Keyboard/ButtonShadow`` (not shown here) renders parts of it. 
         
@@ -162,13 +162,13 @@ The ``Keyboard`` namespace has a lot of views, styles, and view-related types:
         }
     }
     
-    @Tab("Keyboard Bottom Row") {
+    @Tab("BottomRow") {
         The ``Keyboard`` namespace has a ``Keyboard/BottomRow`` that just render a bottom keyboard row, with the same behavior as a ``KeyboardView``.
 
         ![Keyboard Bottom Row](keyboardbottomrow)
     }
     
-    @Tab("Keyboard Switcher") {
+    @Tab("NextKeyboardButton") {
 
         The ``Keyboard`` namespace has a ``NextKeyboardButton`` that works as a native keyboard switcher. It switches to the next system keyboard on tap and shows a popover menu with all available keyboards on long press.
         
@@ -181,7 +181,20 @@ The ``Keyboard`` namespace has a lot of views, styles, and view-related types:
         }
     }
     
-    @Tab("Keyboard Toolbar") {
+    @Tab("NumberPad") {
+
+        The ``Keyboard`` namespace has a ``NumberPad`` that mimics a native number pad keyboard. The ``KeyboardView`` automatically adds a number pad above itself when the ``Keyboard/KeyboardType/numberPad`` keyboard type is selected.
+        
+        @Row {
+            @Column {}
+            @Column(size: 3) {
+                ![NextKeyboardButton](keyboard-numberpad)
+            }
+            @Column {}
+        }
+    }
+    
+    @Tab("Toolbar") {
         
         The ``Keyboard`` namespace has a ``Keyboard/Toolbar`` view that applies a minimum height to its content. KeyboardKit will by default always add a toolbar to the ``KeyboardView`` to avoid callouts from being cut off, since custom keyboards can't render outside of the frame.
         
