@@ -135,7 +135,6 @@ KeyboardKit is available under the MIT license.
 - <doc:App-Article>
 - <doc:Autocomplete-Article>
 - <doc:Callouts-Article>
-- <doc:Colors-Article>
 - <doc:Device-Article>
 - <doc:Dictation-Article>
 - <doc:Emojis-Article>
@@ -143,7 +142,6 @@ KeyboardKit is available under the MIT license.
 - <doc:Feedback-Article>
 - <doc:Gestures-Article>
 - <doc:Host-Article>
-- <doc:Images-Article>
 - <doc:Layout-Article>
 - <doc:Localization-Article>
 - <doc:Navigation-Article>
@@ -280,4 +278,5 @@ KeyboardKit is available under the MIT license.
 ### Themes
 
 - ``KeyboardTheme``
+- ``KeyboardThemeCopyable``
 - ``KeyboardThemeStyleVariation``

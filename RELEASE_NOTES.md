@@ -22,6 +22,8 @@ KeyboardKit 9 is planned to be released shortly after the public release of iOS 
 
 This version continues to reduce the SDK surface area and to rename types to make things more consistent for the 9.0 release.
 
+This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to make it possible to add a new theme context to the SDK. 
+
 ### ✨ Features
 
 * `Keyboard.NumberPad` is a new number pad keyboard component view.

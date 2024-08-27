@@ -183,7 +183,7 @@ The ``Keyboard`` namespace has a lot of views, styles, and view-related types:
     
     @Tab("NumberPad") {
 
-        The ``Keyboard`` namespace has a ``NumberPad`` that mimics a native number pad keyboard. The ``KeyboardView`` automatically adds a number pad above itself when the ``Keyboard/KeyboardType/numberPad`` keyboard type is selected.
+        The ``Keyboard`` namespace has a ``Keyboard/NumberPad`` that mimics a native number pad keyboard. The ``KeyboardView`` automatically adds a number pad above itself when the ``Keyboard/KeyboardType/numberPad`` keyboard type is selected.
         
         @Row {
             @Column {}
