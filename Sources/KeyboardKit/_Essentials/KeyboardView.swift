@@ -318,10 +318,13 @@ private extension KeyboardView {
         totalWidth width: Double,
         inputWidth: Double
     ) -> ButtonView {
-        buttonViewBuilder((
+        let action = item.action
+        let nextProbability = autocompleteContext.nextCharacterProbability(for: action)
+        return buttonViewBuilder((
             item: item,
             view: KeyboardViewItem(
                 item: item,
+                isNextProbability: nextProbability,
                 actionHandler: actionHandler,
                 styleService: styleService,
                 keyboardContext: keyboardContext,

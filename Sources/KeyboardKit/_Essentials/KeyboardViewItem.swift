@@ -9,12 +9,21 @@
 import SwiftUI
 
 /// This view renders button item for a ``KeyboardView``.
+///
+/// The reason why the ``KeyboardView`` doesn't just use the
+/// ``Keyboard/Button`` view, is that this view applies more
+/// stuff to the content.
+///
+/// `TODO` KeyboardKit 9.0 should change ``KeyboardView`` to
+/// not use this view, but rather uses a ``Keyboard/Button``,
+/// which should then apply the proper styles, insets, etc.
 public struct KeyboardViewItem<Content: View>: View {
 
     /// Create a keyboard view item.
     ///
     /// - Parameters:
     ///   - item: The layout item to use within the item.
+    ///   - isNextProbability: The probability in percent (0-1) that this button is the next to be tapped, by default `0`.
     ///   - actionHandler: The button style to apply.
     ///   - styleService: The style service to use.
     ///   - keyboardContext: The keyboard context to which the item should apply.,
@@ -24,6 +33,7 @@ public struct KeyboardViewItem<Content: View>: View {
     ///   - content: The content view to use within the item.
     init(
         item: KeyboardLayout.Item,
+        isNextProbability: Double = 0,
         actionHandler: KeyboardActionHandler,
         styleService: KeyboardStyleService,
         keyboardContext: KeyboardContext,
@@ -33,6 +43,7 @@ public struct KeyboardViewItem<Content: View>: View {
         content: Content
     ) {
         self.item = item
+        self.isNextProbability = isNextProbability
         self.actionHandler = actionHandler
         self.styleService = styleService
         self._keyboardContext = ObservedObject(wrappedValue: keyboardContext)
@@ -54,6 +65,7 @@ public struct KeyboardViewItem<Content: View>: View {
         content: Content
     ) {
         self.item = item
+        self.isNextProbability = 0
         self.actionHandler = actionHandler
         self.styleService = styleProvider
         self._keyboardContext = ObservedObject(wrappedValue: keyboardContext)
@@ -64,6 +76,7 @@ public struct KeyboardViewItem<Content: View>: View {
     }
 
     private let item: KeyboardLayout.Item
+    private let isNextProbability: Double
     private let actionHandler: KeyboardActionHandler
     private let styleService: KeyboardStyleService
     private let calloutContext: CalloutContext?
@@ -79,7 +92,7 @@ public struct KeyboardViewItem<Content: View>: View {
     
     public var body: some View {
         ZStack(alignment: item.alignment) {
-            Color.clear
+            Color.clearInteractable
             content
         }
         .opacity(contentOpacity)
@@ -87,7 +100,9 @@ public struct KeyboardViewItem<Content: View>: View {
         .keyboardLayoutItemSize(
             for: item,
             rowWidth: keyboardWidth,
-            inputWidth: inputWidth)
+            inputWidth: inputWidth
+        )
+        .background(Color.clearInteractable)
         .keyboardButton(
             for: item.action,
             style: buttonStyle,
@@ -95,16 +110,34 @@ public struct KeyboardViewItem<Content: View>: View {
             keyboardContext: keyboardContext,
             calloutContext: calloutContext,
             edgeInsets: item.edgeInsets,
-            isPressed: $isPressed
+            isPressed: $isPressed,
+            additionalTapArea: isNextProbability * 5
         )
     }
-    
+
     private var contentOpacity: Double {
         keyboardContext.isSpaceDragGestureActive ? 0 : 1
     }
     
     private var buttonStyle: Keyboard.ButtonStyle {
         item.action.isSpacer ? .spacer : styleService.buttonStyle(for: item.action, isPressed: isPressed)
+    }
+}
+
+private extension View {
+    
+    @ViewBuilder
+    func additionalTapArea(_ points: Double) -> some View {
+        if points > 0 {
+            self.zIndex(points)
+                .overlay(
+                    Color.clearInteractable
+                        .opacity(0.3)
+                        .padding(-points)
+                )
+        } else {
+            self
+        }
     }
 }
 
@@ -125,5 +158,5 @@ public struct KeyboardViewItem<Content: View>: View {
         inputWidth: 100,
         content: Text("HEJ")
     )
-    .background(Color.red)
+    .background(Color.yellow)
 }

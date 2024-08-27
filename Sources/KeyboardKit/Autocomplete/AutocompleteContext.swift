@@ -27,9 +27,10 @@ import SwiftUI
 /// supports learning suggestions.
 ///
 /// The ``isNextCharacterPredictionEnabled`` settings can be
-/// used to control if the keyboard should perform character
-/// predictions after the main autocomplete operation, which
-/// will then be written to ``nextCharacterPredictions``.
+/// used to set if next character prediction is enabled. The
+/// ``nextCharacterProbabilities`` dictionary should then be
+/// set (today by the controller) after which it can be used
+/// by the ``nextCharacterProbability(for:)-5ajjk`` function.
 ///
 /// KeyboardKit will automatically setup an instance of this
 /// class in ``KeyboardInputViewController/state``, then use
@@ -96,9 +97,16 @@ public class AutocompleteContext: ObservableObject {
     @Published
     public var lastError: Error?
 
-    /// The characters that are more likely to be typed next.
+    /// The probabilities in percent (0-1) of the characters
+    /// that are the more likely to be typed next.
     @Published
-    public var nextCharacterPredictions: [Character: Double] = [:]
+    public var nextCharacterProbabilities: [Character: Double] = [:]
+
+    @available(*, deprecated, renamed: "nextCharacterProbabilities")
+    public var nextCharacterPredictions: [Character: Double] {
+        get { nextCharacterProbabilities }
+        set { nextCharacterProbabilities = newValue }
+    }
 
     /// The suggestions to present to the user.
     @Published
@@ -119,5 +127,25 @@ public class AutocompleteContext: ObservableObject {
         isLoading = false
         lastError = nil
         suggestions = []
+    }
+}
+
+public extension AutocompleteContext {
+
+    /// Get the next characted probability for a certain char.
+    func nextCharacterProbability(for char: String) -> Double {
+        guard
+            let first = char.first,
+            let value = nextCharacterProbabilities[first]
+        else { return 0 }
+        return value
+    }
+
+    /// Get the next characted probability for a certain action.
+    func nextCharacterProbability(for action: KeyboardAction) -> Double {
+        switch action {
+        case .character(let char): nextCharacterProbability(for: char)
+        default: 0
+        }
     }
 }

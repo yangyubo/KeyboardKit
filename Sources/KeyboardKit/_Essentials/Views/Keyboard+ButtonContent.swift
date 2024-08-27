@@ -42,7 +42,6 @@ public extension Keyboard {
         public var body: some View {
             bodyContent
                 .padding(styleService.buttonContentInsets(for: action))
-                .contentShape(Rectangle())
         }
 
         // MARK: - Deprecated

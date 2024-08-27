@@ -22,6 +22,12 @@ KeyboardKit 9 is planned to be released shortly after the public release of iOS 
 
 This version continues to reduce the SDK surface area and to rename types to make things more consistent for the 9.0 release.
 
+### ✨ Features
+
+* `KeyboardView` now applies next character probabilities to its items.
+* `KeyboardViewItem` now applies next character probability to the button modifier. 
+* `View+KeyboardButton` now supports applying an extended tap area, which also affects z-index.
+
 ### 💡 Adjustments
 
 * `Color` extensions are now moved to the `Styling` namespace.
@@ -30,9 +36,6 @@ This version continues to reduce the SDK surface area and to rename types to mak
 ### 🗑️ Deprecations & Renamings
 
 * `KeyboardStyleProvider` and its related types are renamed to `KeyboardStyleService`.
-
-
-
 
 
 
