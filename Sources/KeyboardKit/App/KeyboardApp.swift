@@ -52,10 +52,10 @@ public struct KeyboardApp {
     ///   - dictationDeepLink: The app's dictation deep link, if any.
     public init(
         name: String,
-        licenseKey: String? = "",
+        licenseKey: String = "",
         bundleId: String,
         keyboardExtensionBundleId: String? = nil,
-        appGroupId: String? = "",
+        appGroupId: String? = nil,
         locales: [KeyboardLocale] = .all,
         dictationDeepLink: String? = ""
     ) {
@@ -79,7 +79,7 @@ public struct KeyboardApp {
     public let name: String
 
     /// Your license key, if any.
-    public let licenseKey: String?
+    public let licenseKey: String
 
     /// The app's bundle identifier.
     public let bundleId: String

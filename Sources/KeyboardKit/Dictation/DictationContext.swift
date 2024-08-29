@@ -165,6 +165,12 @@ public extension DictationContext {
         }
     }
 
+    /// Setup the context for a keyboard app.
+    func setup(for app: KeyboardApp) {
+        guard let config = app.dictationConfiguration else { return }
+        setup(with: config)
+    }
+
     /// Setup the context with an app-specific configuration.
     func setup(with config: Dictation.KeyboardConfiguration) {
         appDeepLink = config.appDeepLink

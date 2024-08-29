@@ -11,15 +11,12 @@ import SwiftUI
 /// This class can be used to setup a custom value store for
 /// all settings types in the library.
 ///
-/// The static ``store`` is used to persist changes for each
-/// settings type. Use ``setupStore(_:keyPrefix:)`` to setup
-/// a custom store, or ``setupStore(withAppGroup:keyPrefix:)``
-/// to setup a store that syncs data between the app and its
-/// keyboard extension, using an App Group.
+/// The static ``store`` is used to persist settings. It has
+/// a ``Foundation/UserDefaults/keyboardSettings`` shorthand.
 ///
-/// You can also provide a custom ``storeKeyPrefix`` that is
-/// added before each persisted value. The default prefix is
-/// `"com.keyboardkit.settings."`.
+/// Use ``setupStore(_:keyPrefix:)`` to setup a custom store,
+/// or ``setupStore(withAppGroup:keyPrefix:)`` to use an App
+/// Group to sync settings between the app and its keyboards.
 ///
 /// > Important: `@AppStorage` properties will use the store
 /// that's available when a property is first accessed. Make
@@ -61,10 +58,8 @@ public extension KeyboardSettings {
     /// The key prefix that will be used by library settings.
     static var storeKeyPrefix = "com.keyboardkit.settings."
 
-    /// Whether or not ``setupStore(withAppGroup:keyPrefix:)``
-    /// has been used to replace ``store`` with an App Group
-    /// synced store.
-    static private(set) var storeisAppGroupSynced = false
+    /// Whether or not the ``store`` is App Group synced.
+    static private(set) var storeIsAppGroupSynced = false
 
     @available(*, deprecated, message: "Setting an optional store is no longer allowed.")
     static func setupStore(
@@ -74,7 +69,12 @@ public extension KeyboardSettings {
         setupStore(store ?? .standard, keyPrefix: keyPrefix)
     }
 
-    /// Set up a custom keyboard settings store.
+    /// Set up a custom settings store.
+    ///
+    /// - Parameters:
+    ///   - store: The store to use.
+    ///   - keyPrefix: The prefix to use for all store keys.
+    ///   - isAppGroupSynced: Whether the store syncs with an App Group.
     static func setupStore(
         _ store: UserDefaults,
         keyPrefix: String? = nil,
@@ -82,22 +82,38 @@ public extension KeyboardSettings {
     ) {
         Self.store = store
         Self.storeKeyPrefix = keyPrefix ?? Self.storeKeyPrefix
-        Self.storeisAppGroupSynced = isAppGroupSynced
+        Self.storeIsAppGroupSynced = isAppGroupSynced
+    }
+
+    /// Set up a custom settings store for a ``KeyboardApp``,
+    /// including App Group syncing in the app specifies one.
+    static func setupStore(
+        for app: KeyboardApp,
+        keyPrefix: String? = nil
+    ) {
+        if let appGroup = app.appGroupId {
+            setupStore(forAppGroup: appGroup, keyPrefix: keyPrefix)
+        } else {
+            setupStore(.keyboardSettings, keyPrefix: keyPrefix, isAppGroupSynced: false)
+        }
     }
 
     /// Set up a custom keyboard settings store that uses an
     /// App Group to sync settings between multiple targets.
-    ///
-    /// > Important: For this function to work, you must set
-    /// up an App Group for your app and register it for all
-    /// targets. The function will throw an error if the App
-    /// Group synced store could not be created.
     static func setupStore(
-        withAppGroup id: String,
-        keyPrefix: String? = nil
+        forAppGroup group: String,
+        keyPrefix prefix: String? = nil
     ) {
-        guard let store = UserDefaults(suiteName: id) else { return }
-        setupStore(store, keyPrefix: keyPrefix, isAppGroupSynced: true)
+        guard let store = UserDefaults(suiteName: group) else { return }
+        setupStore(store, keyPrefix: prefix, isAppGroupSynced: true)
+    }
+
+    @available(*, deprecated, renamed: "setupStore(forAppGroupId:keyPrefix:)")
+    static func setupStore(
+        withAppGroup group: String,
+        keyPrefix prefix: String? = nil
+    ) {
+        setupStore(forAppGroup: group, keyPrefix: prefix)
     }
 
     /// Get the store key prefix for a certain namespace.
