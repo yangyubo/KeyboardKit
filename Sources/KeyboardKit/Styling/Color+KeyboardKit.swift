@@ -140,34 +140,31 @@ private extension Color {
 }
 
 #Preview {
-    
-    func preview(for color: Color, name: String) -> some View {
-        VStack(alignment: .leading) {
-            Text(name).font(.footnote)
-            HStack(spacing: 0) {
-                color
-                color.colorScheme(.dark)
+
+    return ScrollView(.vertical) {
+        VStack(spacing: 40) {
+            VStack {
+                Image.keyboardKit
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 100)
+                Text("KeyboardKit Colors")
             }
-            .frame(height: 100)
-            .cornerRadius(10)
-        }
-    }
-    
-    return ScrollView {
-        VStack {
-            Group {
+            .padding(20)
+            .frame(maxWidth: .infinity)
+            .background(Color.keyboardBackground)
+            .clipShape(.rect(cornerRadius: 5))
+            .shadow(radius: 1, y: 1)
+
+            LazyVGrid(columns: .preview, spacing: 20) {
                 preview(for: .keyboardBackground, name: "keyboardBackground")
                 preview(for: .keyboardBackgroundForDarkAppearance, name: "keyboardBackgroundForDarkAppearance")
-            }
-            Group {
                 preview(for: .keyboardButtonBackground, name: "keyboardButtonBackground")
                 preview(for: .keyboardButtonBackgroundForColorSchemeBug, name: "keyboardButtonBackgroundForColorSchemeBug")
                 preview(for: .keyboardButtonBackgroundForDarkAppearance, name: "keyboardButtonBackgroundForDarkAppearance")
                 preview(for: .keyboardButtonForeground, name: "keyboardButtonForeground")
                 preview(for: .keyboardButtonForegroundForDarkAppearance, name: "keyboardButtonForegroundForDarkAppearance")
                 preview(for: .keyboardButtonShadow, name: "keyboardButtonShadow")
-            }
-            Group {
                 preview(for: .keyboardDarkButtonBackground, name: "keyboardDarkButtonBackground")
                 preview(for: .keyboardDarkButtonBackgroundForColorSchemeBug, name: "keyboardDarkButtonBackgroundForColorSchemeBug")
                 preview(for: .keyboardDarkButtonBackgroundForDarkAppearance, name: "keyboardDarkButtonBackgroundForDarkAppearance")
@@ -176,6 +173,24 @@ private extension Color {
             }
         }
         .padding()
+        .font(.title.weight(.regular))
     }
-    .background(Color.black.opacity(0.1).edgesIgnoringSafeArea(.all))
+
+    func preview(for color: Color, name: String) -> some View {
+        HStack(spacing: 0) {
+            color
+            color.colorScheme(.dark)
+        }
+        .background(Color.keyboardBackground)
+        .aspectRatio(1, contentMode: .fill)
+        .cornerRadius(10)
+        .shadow(radius: 1, y: 1)
+    }
+}
+
+private extension Array where Element == GridItem {
+
+    static var preview: Self {
+        [.init(.adaptive(minimum: 100, maximum: 120), spacing: 20)]
+    }
 }
