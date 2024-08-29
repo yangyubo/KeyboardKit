@@ -46,6 +46,7 @@ public struct KeyboardApp {
     ///   - name: The name of the app.
     ///   - licenseKey: Your license key, if any.
     ///   - bundleId: The app's bundle identifier.
+    ///   - keyboardExtensionBundleId: The app's keyboard bundle identifier, by default the bundle ID with a `.keyboard` suffix.
     ///   - appGroupId: The app's App Group identifier, if any.
     ///   - locales: The locales to use in the app, by default `.all`.
     ///   - dictationDeepLink: The app's dictation deep link, if any.
@@ -53,12 +54,14 @@ public struct KeyboardApp {
         name: String,
         licenseKey: String? = "",
         bundleId: String,
+        keyboardExtensionBundleId: String? = nil,
         appGroupId: String? = "",
         locales: [KeyboardLocale] = .all,
         dictationDeepLink: String? = ""
     ) {
         self.name = name
         self.bundleId = bundleId
+        self.keyboardExtensionBundleId = keyboardExtensionBundleId ?? "\(bundleId).keyboard"
         self.appGroupId = appGroupId
         self.locales = locales
         self.licenseKey = licenseKey
@@ -81,6 +84,9 @@ public struct KeyboardApp {
     /// The app's bundle identifier.
     public let bundleId: String
 
+    /// The app's bundle identifier.
+    public let keyboardExtensionBundleId: String
+
     /// The app's App Group identifier, if any.
     public let appGroupId: String?
 
@@ -91,6 +97,15 @@ public struct KeyboardApp {
     public let dictationConfiguration: Dictation.KeyboardConfiguration?
 }
 
+public extension KeyboardApp {
+
+    /// The keyboard extension bundle ID wildcard, which can
+    /// be used to see if the keyboard extension is enabled.
+    var keyboardExtensionBundleIdWildcard: String {
+        "\(bundleId).*"
+    }
+}
+
 private extension KeyboardApp {
 
     static var keyboardKitDemo: Self {
@@ -98,6 +113,7 @@ private extension KeyboardApp {
             name: "KeyboardKit",
             licenseKey: "abc123",
             bundleId: "com.keyboardkit.demo",
+            keyboardExtensionBundleId: "com.keyboardkit.demo.keyboard",
             appGroupId: "group.com.keyboardkit.demo",
             locales: [.english, .swedish, .persian],
             dictationDeepLink: "keyboardkit://dictation"

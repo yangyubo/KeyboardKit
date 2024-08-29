@@ -26,7 +26,10 @@ This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to 
 
 ### ✨ Features
 
-* `Keyboard.NumberPad` is a new number pad keyboard component view.
+* `Image` has a new `keyboardTheme` extension.
+* `Keyboard.NumberPad` is a new keyboard view.
+* `KeyboardApp` has a new `keyboardExtensionBundleId` property.
+* `KeyboardApp` has a new `keyboardExtensionBundleIdWildcard` property.
 * `KeyboardThemeContext` is a new context type for theme-related state.
 * `KeyboardView` now applies next character probabilities to its items.
 * `KeyboardViewItem` now applies next character probability to the button modifier. 
