@@ -27,6 +27,7 @@ This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to 
 ### ✨ Features
 
 * `Keyboard.NumberPad` is a new number pad keyboard component view.
+* `KeyboardThemeContext` is a new context type for theme-related state.
 * `KeyboardView` now applies next character probabilities to its items.
 * `KeyboardViewItem` now applies next character probability to the button modifier. 
 * `View+KeyboardButton` now supports applying an extended tap area, which also affects z-index.

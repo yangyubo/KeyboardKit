@@ -11,11 +11,25 @@
     @PageColor(blue)
 }
 
-This article describes the KeyboardKit Pro theme engine.
+This article describes the KeyboardKit Pro theme engine, which can be used to style the entire keyboard with a single theme that defines all applicable styles.
 
 👑 [KeyboardKit Pro][Pro] unlocks a theme engine that makes it easier to style your keyboard, as well as many predefined themes and theme-based views. You can easily create your own themes as well.
 
 [Pro]: https://github.com/KeyboardKit/KeyboardKitPro
+
+
+## Keyboard Theme Namespace
+
+KeyboardKit has a ``KeyboardTheme`` type that is also a namespace for theme-related types and views, like ``KeyboardTheme/Shelf`` and ``KeyboardTheme/ShelfItem``.
+
+
+
+## Keyboard Theme Context
+
+KeyboardKit has an observable ``KeyboardThemeContext`` that persistent, observable settings, such as  ``KeyboardThemeContext/theme``.
+
+KeyboardKit automatically creates an instance of this class, injects it into ``KeyboardInputViewController/state`` and updates it whenever the theme changes.
+
 
 
 ## What is a theme?
@@ -23,6 +37,7 @@ This article describes the KeyboardKit Pro theme engine.
 A ``KeyboardTheme`` can provide keyboard-related styles in a way that can be easily used and modified. A theme can also define style variations that can be used to customize a constrained set of theme properties.
 
 KeyboardKit Pro unlocks a bunch of themes and style variations, as well as a ``KeyboardStyle/ThemeBasedService`` that can be used to apply themes with the ``KeyboardStyleService`` concept that is used by some views, like the ``KeyboardView``.
+
 
 
 ## Predefined themes

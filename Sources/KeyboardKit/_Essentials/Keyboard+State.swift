@@ -36,9 +36,12 @@ public extension Keyboard {
         
         /// The feedback context to use.
         public lazy var feedbackContext = FeedbackContext()
-        
+
         /// The keyboard context to use.
         public lazy var keyboardContext = KeyboardContext()
+
+        /// The keyboard theme context to use.
+        public lazy var themeContext = KeyboardThemeContext()
     }
 }
 

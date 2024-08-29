@@ -23,9 +23,10 @@ KeyboardKit has a ``KeyboardLayoutService`` protocol that is implemented by clas
 
 
 
-## KeyboardLayout namespace
+## Keyboard Layout Namespace
 
 KeyboardKit has a ``KeyboardLayout`` type that is also a namespace for layout-related types like ``InputSet`` and ``KeyboardLayout``.
+
 
 
 ## Input Sets
