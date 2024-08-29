@@ -144,6 +144,9 @@ public extension KeyboardApp {
 
     /// 👑 This view is unlocked by KeyboardKit Pro.
     struct SettingsScreen {}
+
+    /// 👑 This view is unlocked by KeyboardKit Pro.
+    struct ThemeScreen {}
 }
 
 /// 👑 This is unlocked by KeyboardKit Pro.

@@ -27,6 +27,19 @@ public class KeyboardThemeContext: ObservableObject {
     /// The currently applied theme, if any.
     ///
     /// Stored in ``Foundation/UserDefaults/keyboardSettings``.
-    @AppStorage("\(settingsPrefix)currentTheme", store: .keyboardSettings)
+    @AppStorage("\(settingsPrefix)theme", store: .keyboardSettings)
     public var theme: Keyboard.StorageValue<KeyboardTheme?> = .init(value: nil)
+}
+
+public extension KeyboardThemeContext {
+
+    /// Reset the current ``theme``.
+    func resetTheme() {
+        self.theme.value = nil
+    }
+
+    /// Set the current ``theme``.
+    func setTheme(_ theme: KeyboardTheme) {
+        self.theme.value = theme
+    }
 }

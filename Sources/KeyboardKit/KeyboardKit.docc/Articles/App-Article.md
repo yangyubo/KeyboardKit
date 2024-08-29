@@ -21,7 +21,7 @@ KeyboardKit provides many utilities for the main app target, that simplify build
 
 ## Keyboard App Namespace
 
-KeyboardKit has a ``KeyboardApp`` struct that is also a namespace for app-related types and views, like the ``KeyboardApp/HomeScreen``, ``KeyboardApp/SettingsScreen`` and ``KeyboardApp/LocaleScreen`` screens that are unlocked with KeyboardKit Pro.
+KeyboardKit has a ``KeyboardApp`` struct that is also a namespace for app-related types and views, like the ``KeyboardApp/HomeScreen``, ``KeyboardApp/SettingsScreen`` and ``KeyboardApp/LocaleScreen`` components that can be unlocked with KeyboardKit Pro.
 
 
 
@@ -95,21 +95,27 @@ You can then change any states from any view within your app, to customize them 
 @TabNavigator {
     
     @Tab("HomeScreen") {
-        The ``KeyboardApp``.``KeyboardApp/HomeScreen`` can be used as the home screen of a keyboard app. It can render an app icon, the keyboard status, settings links, and any custom header and footer. All links and options can be hidden, styled and localized to fit your needs. 
+        The ``KeyboardApp``.``KeyboardApp/HomeScreen`` can be used as the home screen of a keyboard app. It shows an app icon header, a keyboard status section, settings links, and custom header and footer content. All links and options can be hidden, styled and localized to fit your needs. 
     
         ![KeyboardApp.HomeScreen](keyboardapp-homescreen)
     }
     
     @Tab("LocaleScreen") {
-        The ``KeyboardApp``.``KeyboardApp/LocaleScreen`` can be used as the main language settings screen in the app. It lists added and available locales, and let users add and reorganize the locales that should be used by the keyboard. It automatically syncs with the ``KeyboardContext``.
+        The ``KeyboardApp``.``KeyboardApp/LocaleScreen`` can be used as the main language settings screen. It lists all added and available locales and lets users add and reorganize the locales that is used by the keyboard. It automatically syncs with the ``KeyboardContext``.
     
         ![KeyboardApp.SettingsScreen](keyboardapp-localescreen)
     }
     
     @Tab("SettingsScreen") {
-        The ``KeyboardApp``.``KeyboardApp/SettingsScreen`` can be used as the main keyboard settings screen in the app. It renders a list options that let user configure the keyboard, and automatically syncs with all injected contexts.
+        The ``KeyboardApp``.``KeyboardApp/SettingsScreen`` can be used as the main keyboard settings screen. It renders a bunch of settings to let users configure their keyboard configuration, and automatically syncs with all injected contexts.
     
         ![KeyboardApp.SettingsScreen](keyboardapp-settingsscreen)
+    }
+    
+    @Tab("ThemeScreen") {
+        The ``KeyboardApp``.``KeyboardApp/ThemeScreen`` can be used as the main theme picker screen. It renders a list of theme shelves and automatically sets the main ``KeyboardThemeContext/theme``, which can then be applied with a   ``KeyboardStyle/ThemeBasedService`` style service.
+    
+        ![KeyboardApp.SettingsScreen](keyboardapp-themescreen)
     }
 }
 

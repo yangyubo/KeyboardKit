@@ -32,6 +32,11 @@ This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to 
 * `KeyboardViewItem` now applies next character probability to the button modifier. 
 * `View+KeyboardButton` now supports applying an extended tap area, which also affects z-index.
 
+### 👑 KeyboardKit Pro
+
+* `KeyboardApp.HomeScreen` can now opt-in to link to the themes screen.
+* `KeyboardApp.ThemeScreen` is a new screen that can be used as the main theme picker screen.  
+
 ### 💡 Adjustments
 
 * `Color` extensions are now moved to the `Styling` namespace.
