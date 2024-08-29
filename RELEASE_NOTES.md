@@ -28,6 +28,7 @@ This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to 
 
 * `Image` has a new `keyboardTheme` extension.
 * `Keyboard.NumberPad` is a new keyboard view.
+* `KeyboardApp` has a new `deepLinks` property.
 * `KeyboardApp` has a new `keyboardExtensionBundleId` property.
 * `KeyboardApp` has a new `keyboardExtensionBundleIdWildcard` property.
 * `KeyboardSettings` & `DictationContext` can now be set up for an app.

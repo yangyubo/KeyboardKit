@@ -39,7 +39,7 @@ static var keyboardKitDemo: Self {
         bundleId: "com.keyboardkit.demo",
         appGroupId: "group.com.keyboardkit.demo",
         locales: [.english, .swedish, .persian],
-        dictationDeepLink: "keyboardkit://dictation"
+        deepLinks: .init(app: "keyboardkit://")
     )
 }
 ```
