@@ -53,7 +53,7 @@ class KeyboardViewController: KeyboardInputViewController {
         /// This passes the `unowned` controller to the view,
         /// which must keep it unowned to avoid memory leaks!
         setupPro(
-            withLicenseKey: KeyboardApp.demoApp.licenseKey ?? "",
+            withLicenseKey: KeyboardApp.demoApp.licenseKey,
             licenseConfiguration: setupServices,  // Specified below
             view: { controller in DemoKeyboardView(controller: controller) }
         )

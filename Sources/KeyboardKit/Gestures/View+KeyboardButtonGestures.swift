@@ -43,10 +43,7 @@ public extension View {
             doubleTapAction: { actionHandler.handle(.doubleTap, on: action) },
             longPressAction: { actionHandler.handle(.longPress, on: action) },
             pressAction: { actionHandler.handle(.press, on: action) },
-            releaseAction: {
-                let action = action
-                actionHandler.handle(.release, on: action)
-            },
+            releaseAction: { actionHandler.handle(.release, on: action) },
             repeatAction: { actionHandler.handle(.repeatPress, on: action) },
             dragAction: { start, current in actionHandler.handleDrag(on: action, from: start, to: current) },
             endAction: { actionHandler.handle(.end, on: action) }
