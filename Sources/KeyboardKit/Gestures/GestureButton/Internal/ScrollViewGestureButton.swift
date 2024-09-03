@@ -1,6 +1,6 @@
 //
-//  Gestures+ScrollViewGestureButton.swift
-//  KeyboardKit
+//  ScrollViewGestureButton.swift
+//  GestureButton
 //
 //  Created by Daniel Saidi on 2022-11-16.
 //  Copyright © 2022-2024 Daniel Saidi. All rights reserved.
@@ -9,115 +9,92 @@
 #if os(iOS) || os(macOS) || os(watchOS)
 import SwiftUI
 
-public extension Gestures {
-    
-    /// This button supports triggering gesture actions in a
-    /// way that works within a `ScrollView`.
-    ///
-    /// This button has complicated code that does not block
-    /// the scroll view gestures.
-    ///
-    /// Use a ``Gestures/GestureButton`` when you don't need
-    /// to use your buttons within a `ScrollView` .
-    struct ScrollViewGestureButton<Label: View>: View {
-        
-        /// Create a scroll view gesture button.
-        ///
-        /// - Parameters:
-        ///   - isPressed: A custom, optional binding to track pressed state, by default `nil`.
-        ///   - pressAction: The action to trigger when the button is pressed, by default `nil`.
-        ///   - releaseInsideAction: The action to trigger when the button is released inside, by default `nil`.
-        ///   - releaseOutsideAction: The action to trigger when the button is released outside of its bounds, by default `nil`.
-        ///   - longPressDelay: The time it takes for a press to count as a long press.
-        ///   - longPressAction: The action to trigger when the button is long pressed, by default `nil`.
-        ///   - doubleTapTimeout: The max time between two taps for them to count as a double tap.
-        ///   - doubleTapAction: The action to trigger when the button is double tapped, by default `nil`.
-        ///   - repeatTimer: The repeat timer to use for the repeat action.
-        ///   - repeatAction: The action to repeat while the button is being pressed, by default `nil`.
-        ///   - dragStartAction: The action to trigger when a drag gesture starts.
-        ///   - dragAction: The action to trigger when a drag gesture changes.
-        ///   - dragEndAction: The action to trigger when a drag gesture ends.
-        ///   - endAction: The action to trigger when a button gesture ends, by default `nil`.
-        ///   - label: The button label.
-        public init(
-            isPressed: Binding<Bool>? = nil,
-            pressAction: Action? = nil,
-            releaseInsideAction: Action? = nil,
-            releaseOutsideAction: Action? = nil,
-            longPressDelay: TimeInterval = Defaults.longPressDelay,
-            longPressAction: Action? = nil,
-            doubleTapTimeout: TimeInterval = Defaults.doubleTapTimeout,
-            doubleTapAction: Action? = nil,
-            repeatTimer: Gestures.RepeatTimer = .shared,
-            repeatAction: Action? = nil,
-            dragStartAction: DragAction? = nil,
-            dragAction: DragAction? = nil,
-            dragEndAction: DragAction? = nil,
-            endAction: Action? = nil,
-            label: @escaping LabelBuilder
-        ) {
-            self.isPressedBinding = isPressed ?? .constant(false)
-            self._config = State(wrappedValue: GestureConfiguration(
-                state: GestureState(),
-                pressAction: pressAction ?? {},
-                releaseInsideAction: releaseInsideAction ?? {},
-                releaseOutsideAction: releaseOutsideAction ?? {},
-                longPressDelay: longPressDelay,
-                longPressAction: longPressAction ?? {},
-                doubleTapTimeout: doubleTapTimeout,
-                doubleTapAction: doubleTapAction ?? {},
-                repeatTimer: repeatTimer,
-                repeatAction: repeatAction,
-                dragStartAction: dragStartAction,
-                dragAction: dragAction,
-                dragEndAction: dragEndAction,
-                endAction: endAction ?? {},
-                label: label
-            ))
-        }
-        
-        public typealias Action = () -> Void
-        public typealias DragAction = (DragGesture.Value) -> Void
-        public typealias LabelBuilder = (_ isPressed: Bool) -> Label
-        
-        var isPressedBinding: Binding<Bool>
-        
-        @State
-        var config: GestureConfiguration
-        
-        @State
-        private var isPressed = false
-        
-        @State
-        private var isPressedByGesture = false
-        
-        public var body: some View {
-            Button(action: config.releaseInsideAction) {
-                config.label(isPressed)
-                    .withDragGestureActions(
-                        for: self.config,
-                        isPressed: $isPressed,
-                        isPressedByGesture: $isPressedByGesture
-                    )
-            }
-            .buttonStyle(
-                Style(
+/// This button can be used to trigger gesture-based actions
+/// in a way that works in a `ScrollView` before iOS 18.
+///
+/// This view is no longer needed from iOS 18, and will thus
+/// be in this unpolished state until it can be removed.
+struct ScrollViewGestureButton<Label: View>: View {
+
+    init(
+        isPressed: Binding<Bool>? = nil,
+        pressAction: Action? = nil,
+        releaseInsideAction: Action? = nil,
+        releaseOutsideAction: Action? = nil,
+        longPressDelay: TimeInterval? = nil,
+        longPressAction: Action? = nil,
+        doubleTapTimeout: TimeInterval? = nil,
+        doubleTapAction: Action? = nil,
+        repeatAction: Action? = nil,
+        repeatTimer: GestureButtonTimer? = nil,
+        dragStartAction: DragAction? = nil,
+        dragAction: DragAction? = nil,
+        dragEndAction: DragAction? = nil,
+        endAction: Action? = nil,
+        label: @escaping LabelBuilder
+    ) {
+        self.isPressedBinding = isPressed ?? .constant(false)
+        self._config = State(wrappedValue: GestureConfiguration(
+            state: GestureState(),
+            pressAction: pressAction ?? {},
+            releaseInsideAction: releaseInsideAction ?? {},
+            releaseOutsideAction: releaseOutsideAction ?? {},
+            longPressDelay: longPressDelay ?? GestureButtonDefaults.longPressDelay,
+            longPressAction: longPressAction ?? {},
+            doubleTapTimeout: doubleTapTimeout ?? GestureButtonDefaults.doubleTapTimeout,
+            doubleTapAction: doubleTapAction ?? {},
+            repeatTimer: repeatTimer ?? .init(),
+            repeatAction: repeatAction,
+            dragStartAction: dragStartAction,
+            dragAction: dragAction,
+            dragEndAction: dragEndAction,
+            endAction: endAction ?? {},
+            label: label
+        ))
+    }
+
+    typealias Action = () -> Void
+    typealias DragAction = (DragGesture.Value) -> Void
+    typealias LabelBuilder = (_ isPressed: Bool) -> Label
+
+    var isPressedBinding: Binding<Bool>
+
+    @State
+    var config: GestureConfiguration
+
+    @State
+    private var isPressed = false
+
+    @State
+    private var isPressedByGesture = false
+
+    var body: some View {
+        Button(action: config.releaseInsideAction) {
+            config.label(isPressed)
+                .withDragGestureActions(
+                    for: self.config,
                     isPressed: $isPressed,
-                    isPressedByGesture: $isPressedByGesture,
-                    config: config
+                    isPressedByGesture: $isPressedByGesture
                 )
-            )
-            .onChange(of: isPressed) { newValue in
-                isPressedBinding.wrappedValue = newValue
-            }
-            .onChange(of: isPressedByGesture) { newValue in
-                isPressed = newValue
-            }
         }
+        .buttonStyle(
+            Style(
+                isPressed: $isPressed,
+                isPressedByGesture: $isPressedByGesture,
+                config: config
+            )
+        )
+        .onChange(of: isPressed) { newValue in
+            isPressedBinding.wrappedValue = newValue
+        }
+        .onChange(of: isPressedByGesture) { newValue in
+            isPressed = newValue
+        }
+        .accessibilityAddTraits(.isButton)
     }
 }
 
-extension Gestures.ScrollViewGestureButton {
+extension ScrollViewGestureButton {
 
     class GestureState: ObservableObject {
 
@@ -134,7 +111,7 @@ extension Gestures.ScrollViewGestureButton {
         let longPressAction: Action
         let doubleTapTimeout: TimeInterval
         let doubleTapAction: Action
-        let repeatTimer: Gestures.RepeatTimer
+        let repeatTimer: GestureButtonTimer
         let repeatAction: Action?
         let dragStartAction: DragAction?
         let dragAction: DragAction?
@@ -145,7 +122,7 @@ extension Gestures.ScrollViewGestureButton {
         func tryStartRepeatTimer() {
             if repeatTimer.isActive { return }
             guard let action = repeatAction else { return }
-            repeatTimer.start(action: action)
+            repeatTimer.start { action() }
         }
 
         func tryStopRepeatTimer() {
@@ -170,7 +147,7 @@ extension Gestures.ScrollViewGestureButton {
         @State
         var longPressDate = Date()
 
-        public func makeBody(configuration: Configuration) -> some View {
+        func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .onChange(of: configuration.isPressed) { isPressed in
                     longPressDate = Date()
@@ -184,7 +161,7 @@ extension Gestures.ScrollViewGestureButton {
     }
 }
 
-private extension Gestures.ScrollViewGestureButton.Style {
+private extension ScrollViewGestureButton.Style {
 
     func handleIsPressed() {
         isPressed.wrappedValue = true
@@ -213,7 +190,7 @@ private extension View {
 
     @ViewBuilder
     func withDragGestureActions<Label: View>(
-        for config: Gestures.ScrollViewGestureButton<Label>.GestureConfiguration,
+        for config: ScrollViewGestureButton<Label>.GestureConfiguration,
         isPressed: Binding<Bool>,
         isPressedByGesture: Binding<Bool>
     ) -> some View {
@@ -226,6 +203,7 @@ private extension View {
                         toggleIsPressedForQuickTap(isPressed)
                         config.releaseInsideAction()
                         config.tryTriggerDoubleTap()
+                        config.tryStopRepeatTimer()
                         if !pressed { config.endAction() }
                     }
                 )
@@ -266,7 +244,6 @@ private extension View {
     }
 }
 
-
 #Preview {
 
     struct Preview: View {
@@ -284,7 +261,7 @@ private extension View {
                     .padding(.horizontal)
 
                 PreviewScrollGroup(title: "Buttons") {
-                    Gestures.ScrollViewGestureButton(
+                    ScrollViewGestureButton(
                         isPressed: $state.isPressed,
                         pressAction: { state.pressCount += 1 },
                         releaseInsideAction: { state.releaseInsideCount += 1 },
@@ -322,7 +299,7 @@ private extension View {
                 .scaleEffect(isPressed ? 0.9 : 1)
                 .animation(.default, value: isPressed)
                 .padding()
-                .background(Color.random())
+                .background(color.opacity(0.1))
                 .cornerRadius(16)
         }
     }
@@ -424,8 +401,7 @@ private extension View {
             HStack {
                 Text("\(title):")
                 Text(value).bold()
-            }
-            .lineLimit(1)
+            }.lineLimit(1)
         }
     }
 

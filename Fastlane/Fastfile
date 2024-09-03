@@ -52,6 +52,7 @@ platform :ios do
   lane :gbadd do
     sh("cd .. && cp -r " + gb_source + " " + gb_target)
     sh("cd .. && rm -rf " + gb_target + "/GestureButton.docc")
+    sh("cd .. && rm -rf " + gb_target + "/Internal/Docc.swift")
     sh("cd .. && git add .")
   end
 
