@@ -20,6 +20,16 @@ KeyboardKit 9 is planned to be released shortly after the public release of iOS 
 
 
 
+## 8.8.3
+
+This version makes the emoji keyboard work in iOS 18.
+
+### 🗑️ Deprecations & Renamings
+
+* `Gestures.GestureButton` and `Gestures.ScrollViewGestureButton` have been deprecated.
+
+
+
 ## 8.8.2
 
 This version fixes a keyboard button gesture bug.

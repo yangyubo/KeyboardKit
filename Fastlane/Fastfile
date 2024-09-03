@@ -9,7 +9,7 @@ platform :ios do
 
 
   # EmojiKit ===================
-    
+
   ek_source = "../emojikit/Sources/EmojiKit/"
   ek_target = "Sources/" + name + "/Emojis/EmojiKit/"
 
@@ -35,6 +35,32 @@ platform :ios do
     ekremove
     ekadd
     git_commit(path: "*", message: "Update EmojiKit")
+  end
+
+
+  # GestureButton ==============
+
+  gb_source = "../gesturebutton/Sources/GestureButton/"
+  gb_target = "Sources/" + name + "/Gestures/GestureButton/"
+
+  desc "Remove GestureButton"
+  lane :gbremove do
+    sh("cd .. && rm -rf " + gb_target)
+  end
+
+  desc "Add GestureButton"
+  lane :gbadd do
+    sh("cd .. && cp -r " + gb_source + " " + gb_target)
+    sh("cd .. && rm -rf " + gb_target + "/GestureButton.docc")
+    sh("cd .. && git add .")
+  end
+
+  desc "Update GestureButton"
+  lane :gbupdate do
+    ensure_git_status_clean
+    gbremove
+    gbadd
+    git_commit(path: "*", message: "Update GestureButton")
   end
 
 
