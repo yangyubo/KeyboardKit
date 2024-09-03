@@ -37,7 +37,7 @@ extension Keyboard {
             doubleTapThreshold: TimeInterval = 0.5,
             endSentenceText: String = ". ",
             endSentenceThreshold: TimeInterval = 3.0,
-            repeatGestureTimer: Gestures.RepeatTimer = .shared
+            repeatGestureTimer: GestureButtonTimer = .init()
         ) {
             self.keyboardContext = keyboardContext
             self.doubleTapThreshold = doubleTapThreshold
@@ -45,7 +45,7 @@ extension Keyboard {
             self.endSentenceThreshold = endSentenceThreshold
             self.repeatGestureTimer = repeatGestureTimer
         }
-        
+
         
         /// The keyboard context to use.
         public let keyboardContext: KeyboardContext
@@ -60,7 +60,7 @@ extension Keyboard {
         public let endSentenceThreshold: TimeInterval
         
         /// The repease gesture timer to use.
-        public let repeatGestureTimer: Gestures.RepeatTimer
+        public var repeatGestureTimer: GestureButtonTimer
         
         
         /// An internal state to keep track of shift checks.

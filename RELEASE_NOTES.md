@@ -24,6 +24,12 @@ KeyboardKit 9 is planned to be released shortly after the public release of iOS 
 
 This version makes the emoji keyboard work in iOS 18.
 
+### ✨ Features
+
+* `GestureButton` is a new gesture button implementation.
+* `GestureButtonTimer` is a new gesture button timer implementation.
+* `Keyboard.State` has a new, shared `repeatGestureTimer`.
+
 ### 🗑️ Deprecations & Renamings
 
 * `Gestures.GestureButton` and `Gestures.ScrollViewGestureButton` have been deprecated.

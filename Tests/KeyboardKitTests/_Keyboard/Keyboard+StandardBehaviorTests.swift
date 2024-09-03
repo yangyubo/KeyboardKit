@@ -20,11 +20,11 @@ class Keyboard_StandardBehaviorTests: XCTestCase {
     var behavior: Keyboard.StandardBehavior!
     var keyboardContext: KeyboardContext!
     var proxy: MockTextDocumentProxy!
-    var timer: Gestures.RepeatTimer!
+    var timer: GestureButtonTimer!
 
 
     override func setUp() {
-        timer = Gestures.RepeatTimer.shared
+        timer = .init()
         proxy = MockTextDocumentProxy()
         keyboardContext = .init()
         keyboardContext.setLocale(.english)

@@ -116,7 +116,7 @@ private extension Gestures.KeyboardButtonGestures {
     }
 
     func gestureButton(for geo: GeometryProxy) -> some View {
-        Gestures.GestureButton(
+        GestureButton(
             isPressed: isPressed,
             pressAction: { handlePress(in: geo) },
             releaseInsideAction: { handleReleaseInside(in: geo) },
@@ -131,7 +131,7 @@ private extension Gestures.KeyboardButtonGestures {
     }
 
     func scrollButton(for geo: GeometryProxy) -> some View {
-        Gestures.ScrollViewGestureButton(
+        ScrollViewGestureButton(
             isPressed: isPressed,
             pressAction: { handlePress(in: geo) },
             releaseInsideAction: { handleReleaseInside(in: geo) },

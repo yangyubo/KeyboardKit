@@ -230,6 +230,8 @@ KeyboardKit is available under the MIT license.
 ### Gestures
 
 - ``Gestures``
+- ``GestureButton``
+- ``GestureButtonTimer``
 - ``DragGestureHandler``
 
 ### Host
