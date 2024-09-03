@@ -56,8 +56,8 @@ class KeyboardViewController: KeyboardInputViewController {
                 buttonView: { $0.view },
                 emojiKeyboard: { $0.view },
                 toolbar: { params in
-                    // params.view
-                    TempScrollToolbar()
+                    params.view
+                    // TempScrollToolbar()
                 }
             )
             /// 💡 You can disable autocorrection like this.
@@ -66,6 +66,10 @@ class KeyboardViewController: KeyboardInputViewController {
     }
 }
 
+/// This scroll toolbar can be used to test how buttons will
+/// behave when they're close to a scrollview. Previously, a
+/// button that was "touched" as part of a scroll, could get
+/// stuck in its pressed state.
 private struct TempScrollToolbar: View {
     
     var body: some View {
