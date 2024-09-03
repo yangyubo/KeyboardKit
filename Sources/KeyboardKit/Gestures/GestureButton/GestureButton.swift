@@ -110,6 +110,7 @@ public struct GestureButton<Label: View>: View {
                 longPressAction: state.longPressAction,
                 doubleTapTimeout: state.doubleTapTimeout,
                 doubleTapAction: state.doubleTapAction,
+                repeatTimer: state.repeatTimer,
                 repeatAction: state.repeatAction,
                 dragStartAction: state.dragStartAction,
                 dragAction: state.dragAction,

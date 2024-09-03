@@ -71,7 +71,7 @@ public extension Keyboard {
         /// The keyboard behavior to use.
         public lazy var keyboardBehavior: KeyboardBehavior = Keyboard.StandardBehavior(
             keyboardContext: state.keyboardContext,
-            repeatGestureTimer: repeatGestureTimer
+            repeatTimer: repeatTimer
         )
 
         /// The keyboard layout service to use.
@@ -79,8 +79,8 @@ public extension Keyboard {
             didSet { state.keyboardContext.triggerKeyboardViewRefresh() }
         }
 
-        /// The shared repeat gesture timer.
-        public lazy var repeatGestureTimer = GestureButtonTimer()
+        /// The repeat gesture timer to share within the keyboard.
+        public lazy var repeatTimer = GestureButtonTimer()
 
         /// The space drag gesture handler to use.
         public lazy var spaceDragGestureHandler = Gestures.SpaceDragGestureHandler(

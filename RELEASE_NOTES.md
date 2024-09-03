@@ -28,7 +28,11 @@ This version makes the emoji keyboard work in iOS 18.
 
 * `GestureButton` is a new gesture button implementation.
 * `GestureButtonTimer` is a new gesture button timer implementation.
-* `Keyboard.State` has a new, shared `repeatGestureTimer`.
+* `Keyboard.State` has a new, shared `repeatTimer` for repeat gestures.
+
+### 💡 Adjustments
+
+* `Keyboard.Button` and many other places now let you inject a custom repeat timer.
 
 ### 🗑️ Deprecations & Renamings
 

@@ -32,6 +32,7 @@ public extension Keyboard {
         ///   - calloutContext: The callout context to affect, if any.
         ///   - edgeInsets: The edge insets to apply to the interactable area, if any.
         ///   - isPressed: An external boolean binding for the pressed state, if any.
+        ///   - repeatTimer: The repeat timer to use, if any.
         ///   - content: An optional content builder that can be used to customize or replace the standard button content.
         public init(
             action: KeyboardAction,
@@ -41,6 +42,7 @@ public extension Keyboard {
             calloutContext: CalloutContext?,
             edgeInsets: EdgeInsets = .init(),
             isPressed: Binding<Bool>? = nil,
+            repeatTimer: GestureButtonTimer? = nil,
             @ViewBuilder content: @escaping ContentBuilder
         ) {
             self.action = action
@@ -50,6 +52,7 @@ public extension Keyboard {
             self.calloutContext = calloutContext
             self.edgeInsets = edgeInsets
             self.isPressed = isPressed
+            self.repeatTimer = repeatTimer
             self.content = content
         }
         
@@ -63,6 +66,7 @@ public extension Keyboard {
         ///   - calloutContext: The callout context to affect, if any.
         ///   - edgeInsets: The edge insets to apply to the interactable area, if any.
         ///   - isPressed: An external boolean binding for the pressed state, if any.
+        ///   - repeatTimer: The repeat timer to use, if any.
         public init(
             action: KeyboardAction,
             actionHandler: KeyboardActionHandler,
@@ -70,7 +74,8 @@ public extension Keyboard {
             keyboardContext: KeyboardContext,
             calloutContext: CalloutContext?,
             edgeInsets: EdgeInsets = .init(),
-            isPressed: Binding<Bool>? = nil
+            isPressed: Binding<Bool>? = nil,
+            repeatTimer: GestureButtonTimer? = nil
         ) where Content == Keyboard.ButtonContent {
             self.init(
                 action: action,
@@ -80,6 +85,7 @@ public extension Keyboard {
                 calloutContext: calloutContext,
                 edgeInsets: edgeInsets,
                 isPressed: isPressed,
+                repeatTimer: repeatTimer,
                 content: { $0 }
             )
         }
@@ -91,6 +97,7 @@ public extension Keyboard {
         private let calloutContext: CalloutContext?
         private let edgeInsets: EdgeInsets
         private var isPressed: Binding<Bool>?
+        private var repeatTimer: GestureButtonTimer?
         private let content: ContentBuilder
         
         @SwiftUI.State
@@ -107,7 +114,8 @@ public extension Keyboard {
                     keyboardContext: keyboardContext,
                     calloutContext: calloutContext,
                     edgeInsets: edgeInsets,
-                    isPressed: isPressed ?? $isPressedInternal
+                    isPressed: isPressed ?? $isPressedInternal,
+                    repeatTimer: repeatTimer
                 )
         }
     }

@@ -27,6 +27,7 @@ extension Gestures {
         ///   - longPressAction: The action to trigger when the button is long pressed.
         ///   - pressAction: The action to trigger when the button is pressed.
         ///   - releaseAction: The action to trigger when the button is released, regardless of where the gesture ends.
+        ///   - repeatTimer: The repeat timer to use, if any.
         ///   - repeatAction: The action to trigger when the button is pressed and held.
         ///   - dragAction: The action to trigger when the button is dragged.
         ///   - endAction: The action to trigger when the gesture end.
@@ -41,6 +42,7 @@ extension Gestures {
             longPressAction: KeyboardGestureAction?,
             pressAction: KeyboardGestureAction?,
             releaseAction: KeyboardGestureAction?,
+            repeatTimer: GestureButtonTimer? = nil,
             repeatAction: KeyboardGestureAction?,
             dragAction: KeyboardDragGestureAction?,
             endAction: KeyboardGestureAction?
@@ -55,6 +57,7 @@ extension Gestures {
             self.longPressAction = longPressAction
             self.pressAction = pressAction
             self.releaseAction = releaseAction
+            self.repeatTimer = repeatTimer
             self.repeatAction = repeatAction
             self.dragAction = dragAction
             self.endAction = endAction
@@ -70,6 +73,7 @@ extension Gestures {
         private let longPressAction: KeyboardGestureAction?
         private let pressAction: KeyboardGestureAction?
         private let releaseAction: KeyboardGestureAction?
+        private let repeatTimer: GestureButtonTimer?
         private let repeatAction: KeyboardGestureAction?
         private let dragAction: KeyboardDragGestureAction?
         private let endAction: KeyboardGestureAction?
@@ -90,54 +94,25 @@ extension Gestures {
     }
 }
 
-private extension View {
-
-    @ViewBuilder
-    func optionalGesture<GestureType: Gesture>(_ gesture: GestureType?) -> some View {
-        if let gesture = gesture {
-            self.gesture(gesture)
-        } else {
-            self
-        }
-    }
-}
 
 // MARK: - Views
 
 private extension Gestures.KeyboardButtonGestures {
 
+    /// We must define the `GestureButton` here otherwise it
+    /// will conflict with the deprecated one. This can then
+    /// be removed in KeyboardKit 9.0.
     @ViewBuilder
     func button(for geo: GeometryProxy) -> some View {
-        if isInScrollView {
-            scrollButton(for: geo)
-        } else {
-            gestureButton(for: geo)
-        }
-    }
-
-    func gestureButton(for geo: GeometryProxy) -> some View {
         GestureButton(
             isPressed: isPressed,
+            isInScrollView: isInScrollView,
             pressAction: { handlePress(in: geo) },
             releaseInsideAction: { handleReleaseInside(in: geo) },
             releaseOutsideAction: { handleReleaseOutside(in: geo) },
             longPressAction: { handleLongPress(in: geo) },
             doubleTapAction: { handleDoubleTap(in: geo) },
-            repeatAction: { handleRepeat(in: geo) },
-            dragAction: { handleDrag(in: geo, value: $0) },
-            endAction: { handleGestureEnded(in: geo) },
-            label: { _ in Color.clearInteractable }
-        )
-    }
-
-    func scrollButton(for geo: GeometryProxy) -> some View {
-        ScrollViewGestureButton(
-            isPressed: isPressed,
-            pressAction: { handlePress(in: geo) },
-            releaseInsideAction: { handleReleaseInside(in: geo) },
-            releaseOutsideAction: { handleReleaseOutside(in: geo) },
-            longPressAction: { handleLongPress(in: geo) },
-            doubleTapAction: { handleDoubleTap(in: geo) },
+            repeatTimer: repeatTimer,
             repeatAction: { handleRepeat(in: geo) },
             dragAction: { handleDrag(in: geo, value: $0) },
             endAction: { handleGestureEnded(in: geo) },

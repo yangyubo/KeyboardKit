@@ -31,19 +31,19 @@ extension Keyboard {
         ///   - doubleTapThreshold: The douple tap threshold to use, by default `0.5` seconds.
         ///   - endSentenceText: The text to use to end sentences with, by default `. `.
         ///   - endSentenceThreshold: The end sentence auto-close threshold to use, by default `3.0` seconds.
-        ///   - repeatGestureTimer: The repease gesture timer to use, by default ``Gestures/RepeatTimer/shared``.
+        ///   - repeatTimer: The repease gesture timer to use, by default ``Gestures/RepeatTimer/shared``.
         public init(
             keyboardContext: KeyboardContext,
             doubleTapThreshold: TimeInterval = 0.5,
             endSentenceText: String = ". ",
             endSentenceThreshold: TimeInterval = 3.0,
-            repeatGestureTimer: GestureButtonTimer = .init()
+            repeatTimer: GestureButtonTimer = .init()
         ) {
             self.keyboardContext = keyboardContext
             self.doubleTapThreshold = doubleTapThreshold
             self.endSentenceText = endSentenceText
             self.endSentenceThreshold = endSentenceThreshold
-            self.repeatGestureTimer = repeatGestureTimer
+            self.repeatTimer = repeatTimer
         }
 
         
@@ -60,8 +60,8 @@ extension Keyboard {
         public let endSentenceThreshold: TimeInterval
         
         /// The repease gesture timer to use.
-        public var repeatGestureTimer: GestureButtonTimer
-        
+        public var repeatTimer: GestureButtonTimer
+
         
         /// An internal state to keep track of shift checks.
         public internal(set) var lastShiftCheck = Date()
@@ -74,7 +74,7 @@ extension Keyboard {
         
         /// The range that backspace should delete.
         open var backspaceRange: Keyboard.BackspaceRange {
-            let duration = repeatGestureTimer.duration ?? 0
+            let duration = repeatTimer.duration ?? 0
             return duration > 3 ? .word : .character
         }
         

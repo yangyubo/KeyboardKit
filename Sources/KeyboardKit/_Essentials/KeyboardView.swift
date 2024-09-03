@@ -54,6 +54,7 @@ public struct KeyboardView<
         self.init(
             layout: layout ?? serviceLayout,
             actionHandler: services.actionHandler,
+            repeatTimer: services.repeatTimer,
             styleProvider: services.styleProvider,
             keyboardContext: state.keyboardContext,
             autocompleteContext: state.autocompleteContext,
@@ -71,6 +72,7 @@ public struct KeyboardView<
     /// - Parameters:
     ///   - layout: The layout to use.
     ///   - actionHandler: The action handler to use.
+    ///   - repeatTimer: The repeat timer to use, if any.
     ///   - styleProvider: The style provider to use.
     ///   - keyboardContext: The keyboard context to use.
     ///   - autocompleteContext: The autocomplete context to use.
@@ -83,6 +85,7 @@ public struct KeyboardView<
     public init(
         layout: KeyboardLayout,
         actionHandler: KeyboardActionHandler,
+        repeatTimer: GestureButtonTimer? = nil,
         styleProvider: KeyboardStyleProvider,
         keyboardContext: KeyboardContext,
         autocompleteContext: AutocompleteContext,
@@ -99,6 +102,7 @@ public struct KeyboardView<
         self.rawLayout = layout
         self.layoutConfig = .standard(for: keyboardContext)
         self.actionHandler = actionHandler
+        self.repeatTimer = repeatTimer
         self.styleProvider = styleProvider
         self.renderBackground = renderBackground
         self.buttonContentBuilder = buttonContent
@@ -113,6 +117,7 @@ public struct KeyboardView<
     private let actionHandler: KeyboardActionHandler
     private let rawLayout: KeyboardLayout
     private let layoutConfig: KeyboardLayout.Configuration
+    private let repeatTimer: GestureButtonTimer?
     private let styleProvider: KeyboardStyleProvider
     private let renderBackground: Bool
     
@@ -294,6 +299,7 @@ private extension KeyboardView {
             view: KeyboardViewItem(
                 item: item,
                 actionHandler: actionHandler,
+                repeatTimer: repeatTimer,
                 styleProvider: styleProvider,
                 keyboardContext: keyboardContext,
                 calloutContext: calloutContext,

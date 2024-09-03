@@ -26,13 +26,15 @@ public extension View {
     ///   - isPressed: An optional binding that can be used to observe the button pressed state.
     ///   - isInScrollView: Whether or not the gestures are used in a scroll view, by default `false`.
     ///   - releaseOutsideTolerance: A custom percentage of the button size outside its bounds to count as a release, if any.
+    ///   - repeatTimer: The repeat timer to use, if any.
     func keyboardButtonGestures(
         for action: KeyboardAction,
         actionHandler: KeyboardActionHandler,
         calloutContext: CalloutContext?,
         isPressed: Binding<Bool> = .constant(false),
         isInScrollView: Bool = false,
-        releaseOutsideTolerance: Double = 1
+        releaseOutsideTolerance: Double = 1,
+        repeatTimer: GestureButtonTimer? = nil
     ) -> some View {
         self.keyboardButtonGestures(
             action: action,
@@ -45,6 +47,7 @@ public extension View {
             pressAction: { actionHandler.handle(.press, on: action) },
             releaseAction: { actionHandler.handle(.release, on: action) },
             repeatAction: { actionHandler.handle(.repeatPress, on: action) },
+            repeatTimer: repeatTimer,
             dragAction: { start, current in actionHandler.handleDrag(on: action, from: start, to: current) },
             endAction: { actionHandler.handle(.end, on: action) }
         )
@@ -67,6 +70,7 @@ public extension View {
     ///   - pressAction: The action to trigger when the button is pressed, if any.
     ///   - releaseAction: The action to trigger when the button is released, regardless of where the gesture ends, if any.
     ///   - repeatAction: The action to trigger when the button is pressed and held, if any.
+    ///   - repeatTimer: The repeat timer to use, if any.
     ///   - dragAction: The action to trigger when the button is dragged, if any.
     @ViewBuilder
     func keyboardButtonGestures(
@@ -80,6 +84,7 @@ public extension View {
         pressAction: KeyboardGestureAction? = nil,
         releaseAction: KeyboardGestureAction? = nil,
         repeatAction: KeyboardGestureAction? = nil,
+        repeatTimer: GestureButtonTimer? = nil,
         dragAction: KeyboardDragGestureAction? = nil,
         endAction: KeyboardGestureAction? = nil
     ) -> some View {
@@ -95,6 +100,7 @@ public extension View {
             longPressAction: longPressAction,
             pressAction: pressAction,
             releaseAction: releaseAction,
+            repeatTimer: repeatTimer,
             repeatAction: repeatAction,
             dragAction: dragAction,
             endAction: endAction

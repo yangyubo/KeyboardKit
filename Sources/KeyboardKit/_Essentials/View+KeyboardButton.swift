@@ -25,6 +25,7 @@ public extension View {
     ///   - isPressed: An optional binding that can observe the button pressed state.
     ///   - isInScrollView: Whether the gestures are used in a scroll view, by default `false`.
     ///   - releaseOutsideTolerance: The percentage of the button size that spans outside the button and still counts as a release, by default `1`.
+    ///   - repeatTimer: The repeat timer to use, if any.
     func keyboardButton(
         for action: KeyboardAction,
         style: Keyboard.ButtonStyle,
@@ -34,7 +35,8 @@ public extension View {
         edgeInsets: EdgeInsets = .init(),
         isPressed: Binding<Bool> = .constant(false),
         isInScrollView: Bool = false,
-        releaseOutsideTolerance: Double = 1
+        releaseOutsideTolerance: Double = 1,
+        repeatTimer: GestureButtonTimer? = nil
     ) -> some View {
         self
             .background(Keyboard.ButtonKey())
@@ -49,7 +51,8 @@ public extension View {
                 calloutContext: calloutContext,
                 isPressed: isPressed,
                 isInScrollView: isInScrollView,
-                releaseOutsideTolerance: releaseOutsideTolerance
+                releaseOutsideTolerance: releaseOutsideTolerance,
+                repeatTimer: repeatTimer
             )
             .localeContextMenu(
                 for: action,
