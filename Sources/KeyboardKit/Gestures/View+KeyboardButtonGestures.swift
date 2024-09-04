@@ -173,43 +173,21 @@ public extension View {
         dragAction: KeyboardDragGestureAction? = nil,
         endAction: KeyboardGestureAction? = nil
     ) -> some View {
-        #if os(iOS) || os(macOS) || os(watchOS)
-        let gestures = Gestures.KeyboardButtonGestures(
-            view: self,
+        keyboardButtonGestures(
             action: action,
             isPressed: isPressed,
-            scrollState: nil,
+            scrollState: isInScrollView ? .init() : nil,
             calloutContext: calloutContext,
             releaseOutsideTolerance: releaseOutsideTolerance,
             doubleTapAction: doubleTapAction,
             longPressAction: longPressAction,
             pressAction: pressAction,
             releaseAction: releaseAction,
-            repeatTimer: repeatTimer,
             repeatAction: repeatAction,
+            repeatTimer: repeatTimer,
             dragAction: dragAction,
             endAction: endAction
         )
-        #endif
-
-        #if os(iOS)
-        if action == .nextKeyboard {
-            Keyboard.NextKeyboardButton {
-                self
-            }
-        } else {
-            gestures
-        }
-        #elseif os(macOS) || os(watchOS)
-        gestures
-        #else
-        Button {
-            pressAction?()
-            releaseAction?()
-        } label: {
-            self
-        }
-        #endif
     }
 }
 
