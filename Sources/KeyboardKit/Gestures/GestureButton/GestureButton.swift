@@ -110,7 +110,6 @@ public struct GestureButton<Label: View>: View {
                 longPressAction: state.longPressAction,
                 doubleTapTimeout: state.doubleTapTimeout,
                 doubleTapAction: state.doubleTapAction,
-                repeatTimer: state.repeatTimer,
                 repeatAction: state.repeatAction,
                 dragStartAction: state.dragStartAction,
                 dragAction: state.dragAction,
@@ -167,11 +166,11 @@ private extension GestureButton {
     ) {
         state.lastGestureValue = value
         if scrollState.isScrolling { return }
+        state.tryHandleDrag(value)
         if state.gestureWasStarted { return }
         state.gestureWasStarted = true
         setScrollGestureDisabledState(true)
         state.tryHandlePress(value)
-        state.tryHandleDrag(value)
     }
     
     func handleDragEnded(_ value: DragGesture.Value, in geo: GeometryProxy) {

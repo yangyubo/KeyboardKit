@@ -73,12 +73,12 @@ public struct KeyboardViewItem<Content: View>: View {
             inputWidth: inputWidth)
         .keyboardButton(
             for: item.action,
+            isPressed: $isPressed,
             style: buttonStyle,
             actionHandler: actionHandler,
             keyboardContext: keyboardContext,
             calloutContext: calloutContext,
             edgeInsets: item.edgeInsets,
-            isPressed: $isPressed,
             repeatTimer: repeatTimer
         )
     }

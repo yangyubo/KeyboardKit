@@ -109,12 +109,12 @@ public extension Keyboard {
             buttonContent
                 .keyboardButton(
                     for: action,
+                    isPressed: isPressed ?? $isPressedInternal,
                     style: style,
                     actionHandler: actionHandler,
                     keyboardContext: keyboardContext,
                     calloutContext: calloutContext,
                     edgeInsets: edgeInsets,
-                    isPressed: isPressed ?? $isPressedInternal,
                     repeatTimer: repeatTimer
                 )
         }

@@ -17,24 +17,24 @@ public extension View {
     ///
     /// - Parameters:
     ///   - action: The keyboard action to trigger.
+    ///   - isPressed: An external pressed binding, if any.
+    ///   - scrollState: The scroll state to use, if any.
     ///   - style: The keyboard style to apply.
     ///   - actionHandler: The keyboard action handler to use.
     ///   - keyboardContext: The keyboard context to use.
     ///   - calloutContext: The callout context to affect, if any.
     ///   - edgeInsets: The edge insets to apply to the interactable area, if any.
-    ///   - isPressed: An optional binding that can observe the button pressed state.
-    ///   - isInScrollView: Whether the gestures are used in a scroll view, by default `false`.
     ///   - releaseOutsideTolerance: The percentage of the button size that spans outside the button and still counts as a release, by default `1`.
     ///   - repeatTimer: The repeat timer to use, if any.
     func keyboardButton(
         for action: KeyboardAction,
+        isPressed: Binding<Bool> = .constant(false),
+        scrollState: GestureButtonScrollState? = nil,
         style: Keyboard.ButtonStyle,
         actionHandler: KeyboardActionHandler,
         keyboardContext: KeyboardContext,
         calloutContext: CalloutContext?,
         edgeInsets: EdgeInsets = .init(),
-        isPressed: Binding<Bool> = .constant(false),
-        isInScrollView: Bool = false,
         releaseOutsideTolerance: Double = 1,
         repeatTimer: GestureButtonTimer? = nil
     ) -> some View {
@@ -47,10 +47,10 @@ public extension View {
             .background(Color.clearInteractable)
             .keyboardButtonGestures(
                 for: action,
+                isPressed: isPressed,
+                scrollState: scrollState,
                 actionHandler: actionHandler,
                 calloutContext: calloutContext,
-                isPressed: isPressed,
-                isInScrollView: isInScrollView,
                 releaseOutsideTolerance: releaseOutsideTolerance,
                 repeatTimer: repeatTimer
             )
@@ -61,7 +61,35 @@ public extension View {
             )
             .keyboardButtonAccessibility(for: action)
     }
-    
+
+    @_disfavoredOverload
+    @available(*, deprecated, message: "Use isPressed and scrollState modifier instead")
+    func keyboardButton(
+        for action: KeyboardAction,
+        style: Keyboard.ButtonStyle,
+        actionHandler: KeyboardActionHandler,
+        keyboardContext: KeyboardContext,
+        calloutContext: CalloutContext?,
+        edgeInsets: EdgeInsets = .init(),
+        isPressed: Binding<Bool> = .constant(false),
+        isInScrollView: Bool = false,
+        releaseOutsideTolerance: Double = 1,
+        repeatTimer: GestureButtonTimer? = nil
+    ) -> some View {
+        self.keyboardButton(
+            for: action,
+            isPressed: isPressed,
+            scrollState: isInScrollView ? .init() : nil,
+            style: style,
+            actionHandler: actionHandler,
+            keyboardContext: keyboardContext,
+            calloutContext: calloutContext,
+            edgeInsets: edgeInsets,
+            releaseOutsideTolerance: releaseOutsideTolerance,
+            repeatTimer: repeatTimer
+        )
+    }
+
     /// Apply keyboard accessibility for the provided action.
     @ViewBuilder
     func keyboardButtonAccessibility(
@@ -157,12 +185,12 @@ private extension View {
                 .padding()
                 .keyboardButton(
                     for: action,
+                    isPressed: $isPressed,
                     style: style,
                     actionHandler: .preview,
                     keyboardContext: context,
                     calloutContext: .preview,
-                    edgeInsets: insets,
-                    isPressed: $isPressed
+                    edgeInsets: insets
                 )
         }
     }
