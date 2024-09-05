@@ -187,9 +187,8 @@ private extension GestureButton {
     }
     
     func handleDragEnded(_ value: DragGesture.Value, in geo: GeometryProxy) {
-        guard state.gestureWasStarted else { return }
         if isInScrollView {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 handleDragEndedWithState(value, in: geo)
             }
         } else {
