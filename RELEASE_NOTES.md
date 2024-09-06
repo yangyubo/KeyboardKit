@@ -53,8 +53,10 @@ This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to 
 
 * `Color` extensions are now moved to the `Styling` namespace.
 * `Image` extensions are now moved to the `Styling` namespace.
-* `Keyboard.Button` and many other places now let you inject a custom repeat timer. 
+* `Keyboard.Button` and other views let you inject a custom repeat timer. 
 * `KeyboardApp` `licenseKey` is no longer optional, but defaults to empty.
+* `KeyboardContext` no longer syncs keyboard type if it has the same value.
+* `KeyboardContext` now starts with `keyboardType` set to `.alphabetic(.auto)`.
 
 ### 🗑️ Deprecations & Renamings
 
