@@ -84,7 +84,7 @@ public struct KeyboardApp {
         keyboardExtensionBundleId: String? = nil,
         appGroupId: String? = nil,
         locales: [KeyboardLocale] = .all,
-        dictationDeepLink: String? = ""
+        dictationDeepLink: String
     ) {
         self.init(
             name: name,
