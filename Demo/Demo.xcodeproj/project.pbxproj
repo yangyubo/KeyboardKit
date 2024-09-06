@@ -44,6 +44,7 @@
 		A9EAA6C927B1526500BC9376 /* KeyboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = A9EAA6C827B1526500BC9376 /* KeyboardKit */; };
 		A9EAA6CB27B1527300BC9376 /* KeyboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = A9EAA6CA27B1527300BC9376 /* KeyboardKit */; };
 		A9EAA6F727B165B600BC9376 /* DemoActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9EAA6F327B165B600BC9376 /* DemoActionHandler.swift */; };
+		A9FA878B2C8B00FA007AE022 /* VersionBridging.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FA878A2C8B00FA007AE022 /* VersionBridging.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +108,7 @@
 		A9D6D3A02C7E1D9A007D8D6F /* KeyboardViewController+DemoServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KeyboardViewController+DemoServices.swift"; sourceTree = "<group>"; };
 		A9EAA6C727B1523C00BC9376 /* keyboardkit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = keyboardkit; path = ../; sourceTree = "<group>"; };
 		A9EAA6F327B165B600BC9376 /* DemoActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoActionHandler.swift; sourceTree = "<group>"; };
+		A9FA878A2C8B00FA007AE022 /* VersionBridging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionBridging.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +258,7 @@
 				A93342CF299A855F008FAA95 /* KeyboardViewController.swift */,
 				A92E4A1D2B15101500F957C6 /* DemoToolbar.swift */,
 				A9A7E076299B721600713F2A /* DemoKeyboardView.swift */,
+				A9FA878A2C8B00FA007AE022 /* VersionBridging.swift */,
 				A9155D002BC49350008C360F /* Assets */,
 				A9155CFE2BC4933F008C360F /* Supporting Files */,
 			);
@@ -444,6 +447,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9FA878B2C8B00FA007AE022 /* VersionBridging.swift in Sources */,
 				A96F413D2C73FD62007344D2 /* KeyboardApp+Demo.swift in Sources */,
 				A93342D0299A855F008FAA95 /* KeyboardViewController.swift in Sources */,
 				A9D6D39A2C7E1A58007D8D6F /* DemoLayoutService.swift in Sources */,
