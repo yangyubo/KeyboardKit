@@ -53,7 +53,7 @@ class KeyboardViewController: KeyboardInputViewController {
         /// This passes the `unowned` controller to the view,
         /// which must keep it unowned to avoid memory leaks!
         setupPro(
-            withLicenseKey: KeyboardApp.demoApp.licenseKey ?? "",
+            withLicenseKey: KeyboardApp.demoApp.licenseKey,
             licenseConfiguration: setupServices,  // Specified below
             view: { controller in DemoKeyboardView(controller: controller) }
         )
@@ -72,10 +72,10 @@ class KeyboardViewController: KeyboardInputViewController {
         ///
         /// Themes are powerful ways to specify styles for a
         /// keyboard. You can insert any theme below.
-        services.styleProvider = .themed(
+        services.styleService = .themed(
             with: .standard,
             keyboardContext: state.keyboardContext,
-            fallback: services.styleProvider
+            fallback: services.styleService
         )
     }
 }

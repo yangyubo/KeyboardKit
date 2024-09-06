@@ -15,6 +15,11 @@ public extension View {
     /// The `edgeInsets` init parameter can be used to apply
     /// intrinsic insets within the interactable button area.
     ///
+    /// > Note: ``Keyboard/Button`` view should replace this
+    /// modifier and use environment values to apply various
+    /// styles and features. This will most probably be done
+    /// in KeyboardKit 9.0.
+    ///
     /// - Parameters:
     ///   - action: The keyboard action to trigger.
     ///   - isPressed: An external pressed binding, if any.
@@ -24,6 +29,7 @@ public extension View {
     ///   - keyboardContext: The keyboard context to use.
     ///   - calloutContext: The callout context to affect, if any.
     ///   - edgeInsets: The edge insets to apply to the interactable area, if any.
+    ///   - additionalTapArea: The additional tap area in point to add outside the button, causing it to pop above other buttons, by default `0`.
     ///   - releaseOutsideTolerance: The percentage of the button size that spans outside the button and still counts as a release, by default `1`.
     ///   - repeatTimer: The repeat timer to use, if any.
     func keyboardButton(
@@ -35,6 +41,7 @@ public extension View {
         keyboardContext: KeyboardContext,
         calloutContext: CalloutContext?,
         edgeInsets: EdgeInsets = .init(),
+        additionalTapArea: Double = 0,
         releaseOutsideTolerance: Double = 1,
         repeatTimer: GestureButtonTimer? = nil
     ) -> some View {
@@ -44,7 +51,11 @@ public extension View {
             .foregroundColor(style.foregroundColor)
             .font(style.font)
             .padding(edgeInsets)
-            .background(Color.clearInteractable)
+            .additionalTapArea(
+                additionalTapArea,
+                for: action,
+                actionHandler: actionHandler
+            )
             .keyboardButtonGestures(
                 for: action,
                 isPressed: isPressed,
@@ -106,7 +117,29 @@ public extension View {
 }
 
 private extension View {
-    
+
+    @ViewBuilder
+    func additionalTapArea(
+        _ points: Double,
+        for action: KeyboardAction,
+        actionHandler: KeyboardActionHandler
+    ) -> some View {
+        if points > 0 {
+            self.zIndex(points)
+                .background(
+                    Color.clearInteractable
+                        .opacity(0.3)
+                        .padding(-points)
+                        .onTapGesture {
+                            actionHandler.handle(.press, on: action)
+                            actionHandler.handle(.release, on: action)
+                        }
+                )
+        } else {
+            self
+        }
+    }
+
     @ViewBuilder
     func localeContextMenu(
         for action: KeyboardAction,

@@ -55,7 +55,7 @@ public struct KeyboardView<
             layout: layout ?? serviceLayout,
             actionHandler: services.actionHandler,
             repeatTimer: services.repeatTimer,
-            styleProvider: services.styleProvider,
+            styleService: services.styleService,
             keyboardContext: state.keyboardContext,
             autocompleteContext: state.autocompleteContext,
             calloutContext: state.calloutContext,
@@ -73,7 +73,7 @@ public struct KeyboardView<
     ///   - layout: The layout to use.
     ///   - actionHandler: The action handler to use.
     ///   - repeatTimer: The repeat timer to use, if any.
-    ///   - styleProvider: The style provider to use.
+    ///   - styleService: The style service to use.
     ///   - keyboardContext: The keyboard context to use.
     ///   - autocompleteContext: The autocomplete context to use.
     ///   - calloutContext: The callout context to use.
@@ -86,7 +86,7 @@ public struct KeyboardView<
         layout: KeyboardLayout,
         actionHandler: KeyboardActionHandler,
         repeatTimer: GestureButtonTimer? = nil,
-        styleProvider: KeyboardStyleProvider,
+        styleService: KeyboardStyleService,
         keyboardContext: KeyboardContext,
         autocompleteContext: AutocompleteContext,
         calloutContext: CalloutContext?,
@@ -103,7 +103,7 @@ public struct KeyboardView<
         self.layoutConfig = .standard(for: keyboardContext)
         self.actionHandler = actionHandler
         self.repeatTimer = repeatTimer
-        self.styleProvider = styleProvider
+        self.styleService = styleService
         self.renderBackground = renderBackground
         self.buttonContentBuilder = buttonContent
         self.buttonViewBuilder = buttonView
@@ -113,12 +113,41 @@ public struct KeyboardView<
         _calloutContext = ObservedObject(wrappedValue: calloutContext ?? .disabled)
         _keyboardContext = ObservedObject(wrappedValue: keyboardContext)
     }
-    
+
+    @available(*, deprecated, message: "Use the style service initializer instead.")
+    public init(
+        layout: KeyboardLayout,
+        actionHandler: KeyboardActionHandler,
+        styleProvider: KeyboardStyleProvider,
+        keyboardContext: KeyboardContext,
+        autocompleteContext: AutocompleteContext,
+        calloutContext: CalloutContext?,
+        renderBackground: Bool = true,
+        @ViewBuilder buttonContent: @escaping ButtonContentBuilder,
+        @ViewBuilder buttonView: @escaping ButtonViewBuilder,
+        @ViewBuilder emojiKeyboard: @escaping EmojiKeyboardBuilder,
+        @ViewBuilder toolbar: @escaping ToolbarBuilder
+    ) {
+        self.init(
+            layout: layout,
+            actionHandler: actionHandler,
+            styleService: styleProvider,
+            keyboardContext: keyboardContext,
+            autocompleteContext: autocompleteContext,
+            calloutContext: calloutContext,
+            renderBackground: renderBackground,
+            buttonContent: buttonContent,
+            buttonView: buttonView,
+            emojiKeyboard: emojiKeyboard,
+            toolbar: toolbar
+        )
+    }
+
     private let actionHandler: KeyboardActionHandler
     private let rawLayout: KeyboardLayout
     private let layoutConfig: KeyboardLayout.Configuration
     private let repeatTimer: GestureButtonTimer?
-    private let styleProvider: KeyboardStyleProvider
+    private let styleService: KeyboardStyleService
     private let renderBackground: Bool
     
     private let buttonContentBuilder: ButtonContentBuilder
@@ -135,14 +164,14 @@ public struct KeyboardView<
     
     
     private var actionCalloutStyle: Callouts.ActionCalloutStyle {
-        var style = styleProvider.actionCalloutStyle
+        var style = styleService.actionCalloutStyle
         let insets = layoutConfig.buttonInsets
         style.callout.buttonInset = CGSize(width: insets.leading, height: insets.top)
         return style
     }
 
     private var inputCalloutStyle: Callouts.InputCalloutStyle {
-        var style = styleProvider.inputCalloutStyle
+        var style = styleService.inputCalloutStyle
         let insets = layoutConfig.buttonInsets
         style.callout.buttonInset = CGSize(width: insets.leading, height: insets.top)
         return style
@@ -161,17 +190,18 @@ public struct KeyboardView<
     private var rawInputToolbarDisplayMode
 
     public var body: some View {
-        KeyboardStyle.StandardProvider.iPadProRenderingModeActive = layout.ipadProLayout
+        KeyboardStyle.StandardService.iPadProRenderingModeActive = layout.ipadProLayout
         
         return VStack(spacing: 0) {
             toolbar
             keyboardView
         }
         .autocorrectionDisabled(with: autocompleteContext)
-        .opacity(shouldShowEmojiKeyboard ? 0 : 1)
+        .opacity(shouldShowKeyboard ? 1 : 0)
         .overlay(emojiKeyboard, alignment: .bottom)
-        .foregroundColor(styleProvider.foregroundColor)
-        .background(renderBackground ? styleProvider.backgroundStyle : nil)
+        .overlay(numberPad, alignment: .bottom)
+        .foregroundColor(styleService.foregroundColor)
+        .background(renderBackground ? styleService.backgroundStyle : nil)
         .keyboardCalloutContainer(
             calloutContext: calloutContext,
             keyboardContext: keyboardContext
@@ -202,10 +232,11 @@ private extension KeyboardView {
         )
     }
     
-    var shouldShowEmojiKeyboard: Bool {
+    var shouldShowKeyboard: Bool {
         switch keyboardContext.keyboardType {
-        case .emojis: true
-        default: false
+        case .emojis: false
+        case .numberPad: false
+        default: true
         }
     }
 }
@@ -228,18 +259,18 @@ private extension KeyboardView {
                     }
                 }
             }
-            .padding(styleProvider.keyboardEdgeInsets)
+            .padding(styleService.keyboardEdgeInsets)
             .environment(\.layoutDirection, .leftToRight)
         }
         .frame(height: layout.totalHeight)
         .id(keyboardContext.locale.identifier)
     }
-    
+
     @ViewBuilder
     var emojiKeyboard: some View {
         emojiKeyboardContent
             .id(keyboardContext.interfaceOrientation)           // TODO: Temp orientation fix
-            .opacity(shouldShowEmojiKeyboard ? 1 : 0)
+            .opacity(keyboardContext.keyboardType == .emojis ? 1 : 0)
     }
 
     @ViewBuilder
@@ -251,7 +282,7 @@ private extension KeyboardView {
                     actionHandler: actionHandler,
                     keyboardContext: keyboardContext,
                     calloutContext: calloutContext,
-                    styleProvider: styleProvider
+                    styleService: styleService
                 )
             ))
         } else {
@@ -259,18 +290,29 @@ private extension KeyboardView {
         }
     }
 
+    @ViewBuilder
+    var numberPad: some View {
+        Keyboard.NumberPad(
+            actionHandler: actionHandler,
+            styleService: styleService,
+            keyboardContext: keyboardContext
+        )
+        .padding(10)
+        .opacity(keyboardContext.keyboardType == .numberPad ? 1 : 0)
+    }
+
     var toolbar: some View {
         toolbarBuilder((
             autocompleteAction: actionHandler.handle(_:),
-            style: styleProvider.autocompleteToolbarStyle,
+            style: styleService.autocompleteToolbarStyle,
             view: Autocomplete.Toolbar(
                 suggestions: autocompleteContext.suggestions,
                 locale: keyboardContext.locale,
-                style: styleProvider.autocompleteToolbarStyle,
+                style: styleService.autocompleteToolbarStyle,
                 suggestionAction: actionHandler.handle(_:)
             )
         ))
-        .frame(minHeight: styleProvider.autocompleteToolbarStyle.height)
+        .frame(minHeight: styleService.autocompleteToolbarStyle.height)
     }
 }
 
@@ -283,7 +325,7 @@ private extension KeyboardView {
             item: item,
             view: Keyboard.ButtonContent(
                 action: item.action,
-                styleProvider: styleProvider,
+                styleService: styleService,
                 keyboardContext: keyboardContext
             )
         ))
@@ -294,13 +336,16 @@ private extension KeyboardView {
         totalWidth width: Double,
         inputWidth: Double
     ) -> ButtonView {
-        buttonViewBuilder((
+        let action = item.action
+        let nextProbability = autocompleteContext.nextCharacterProbability(for: action)
+        return buttonViewBuilder((
             item: item,
             view: KeyboardViewItem(
                 item: item,
+                isNextProbability: nextProbability,
                 actionHandler: actionHandler,
                 repeatTimer: repeatTimer,
-                styleProvider: styleProvider,
+                styleService: styleService,
                 keyboardContext: keyboardContext,
                 calloutContext: calloutContext,
                 keyboardWidth: width,

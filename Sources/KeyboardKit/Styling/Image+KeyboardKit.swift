@@ -49,6 +49,7 @@ public extension Image {
     static var keyboardSpeakerUp = symbol("speaker.wave.1")
     static var keyboardTab = symbol("arrow.right.to.line")
     static var keyboardTabRtl = symbol("arrow.left.to.line")
+    static var keyboardTheme = symbol("paintpalette")
     static var keyboardUndo = symbol("arrow.uturn.left")
     static var keyboardZeroWidthSpace = symbol("circle.dotted")
     
@@ -107,78 +108,63 @@ extension Image {
 
 #Preview {
     
-    func images() -> [Image] {
-        [
-            .keyboard,
-            .keyboardArrowUp,
-            .keyboardArrowDown,
-            .keyboardArrowLeft,
-            .keyboardArrowRight,
-            .keyboardAudioFeedbackDisabled,
-            .keyboardAudioFeedbackEnabled,
-            .keyboardBackspace,
-            .keyboardBackspaceRtl,
-            .keyboardBrightnessDown,
-            .keyboardBrightnessUp,
-            .keyboardCommand,
-            .keyboardControl,
-            .keyboardDictation,
-            .keyboardDismiss,
-            .keyboardEmail,
-            .keyboardEmojiSymbol,
-            .keyboardGlobe,
-            .keyboardHapticFeedbackDisabled,
-            .keyboardHapticFeedbackEnabled,
-            .keyboardImages,
-            .keyboardNewline,
-            .keyboardNewlineRtl,
-            .keyboardOption,
-            .keyboardRedo,
-            .keyboardSearch,
-            .keyboardSettings,
-            .keyboardShiftCapslocked,
-            .keyboardShiftCapslockInactive,
-            .keyboardShiftLowercased,
-            .keyboardShiftUppercased,
-            .keyboardSpeaker,
-            .keyboardSpeakerDown,
-            .keyboardSpeakerUp,
-            .keyboardTab,
-            .keyboardTabRtl,
-            .keyboardUndo,
-            .keyboardZeroWidthSpace,
-            .keyboardEmoji
-        ]
-    }
-    
-    return ScrollView(.vertical) {
-        VStack(spacing: 20) {
-            Image.keyboardKit
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: 100)
-
-            Divider()
-
-            LazyVGrid(columns: .preview, spacing: 20) {
-                ForEach(Array(images().enumerated()), id: \.0) {
-                    $0.1
-                }
+    ScrollView(.vertical) {
+        VStack(spacing: 40) {
+            VStack {
+                Image.keyboardKit
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 100)
+                Text("KeyboardKit Icons")
             }
-
-            Divider()
+            .padding(20)
+            .frame(maxWidth: .infinity)
+            .background(Color.keyboardBackground)
+            .clipShape(.rect(cornerRadius: 5))
+            .shadow(radius: 1, y: 1)
 
             LazyVGrid(columns: .preview, spacing: 20) {
-                Image.keyboardAudioFeedback(enabled: false)
+                Image.keyboard
+                Image.keyboardArrowUp
+                Image.keyboardArrowDown
+                Image.keyboardArrowLeft
+                Image.keyboardArrowRight
                 Image.keyboardAudioFeedback(enabled: true)
+                Image.keyboardAudioFeedback(enabled: false)
                 Image.keyboardBackspace(for: .english)
                 Image.keyboardBackspace(for: .arabic)
-                Image.keyboardHapticFeedback(enabled: false)
+                Image.keyboardBackspaceRtl
+                Image.keyboardBrightnessDown
+                Image.keyboardBrightnessUp
+                Image.keyboardCommand
+                Image.keyboardControl
+                Image.keyboardDictation
+                Image.keyboardDismiss
+                Image.keyboardEmail
+                Image.keyboardEmojiSymbol
+                Image.keyboardGlobe
                 Image.keyboardHapticFeedback(enabled: true)
+                Image.keyboardHapticFeedback(enabled: false)
+                Image.keyboardImages
                 Image.keyboardNewline(for: .english)
                 Image.keyboardNewline(for: .arabic)
+                Image.keyboardOption
+                Image.keyboardRedo
+                Image.keyboardSearch
+                Image.keyboardSettings
+                Image.keyboardShiftCapslocked
+                Image.keyboardShiftCapslockInactive
+                Image.keyboardShiftLowercased
+                Image.keyboardShiftUppercased
+                Image.keyboardSpeaker
+                Image.keyboardSpeakerDown
+                Image.keyboardSpeakerUp
                 Image.keyboardTab(for: .english)
                 Image.keyboardTab(for: .arabic)
+                Image.keyboardTheme
+                Image.keyboardUndo
+                Image.keyboardZeroWidthSpace
+                Image.keyboardEmoji
             }
         }
         .padding()
@@ -186,7 +172,7 @@ extension Image {
     }
 }
 
-extension Array where Element == GridItem {
+private extension Array where Element == GridItem {
 
     static var preview: Self {
         [.init(.adaptive(minimum: 40, maximum: 50), spacing: 20)]

@@ -336,16 +336,16 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
         Task {
             do {
                 let suggestions = try await service.autocompleteSuggestions(for: autocompleteText ?? "")
-                var nextCharacterPredictions: [Character: Double] = [:]
+                var probabilities: [Character: Double] = [:]
                 if context.isNextCharacterPredictionEnabled {
-                    nextCharacterPredictions = try await service.nextCharacterPredictions(
+                    probabilities = try await service.nextCharacterPredictions(
                         forText: text ?? "",
                         suggestions: suggestions
                     )
                 }
                 updateAutocompleteContext(
                     with: suggestions,
-                    nextCharacterPredictions: nextCharacterPredictions
+                    nextCharacterProbabilities: probabilities
                 )
             } catch {
                 updateAutocompleteContext(with: error)
@@ -395,10 +395,10 @@ private extension KeyboardInputViewController {
     /// Update the autocomplete context with new suggestions.
     func updateAutocompleteContext(
         with result: [Autocomplete.Suggestion],
-        nextCharacterPredictions: [Character: Double]
+        nextCharacterProbabilities: [Character: Double]
     ) {
         DispatchQueue.main.async { [weak self] in
-            self?.state.autocompleteContext.nextCharacterPredictions = nextCharacterPredictions
+            self?.state.autocompleteContext.nextCharacterProbabilities = nextCharacterProbabilities
             self?.state.autocompleteContext.suggestionsFromService = result
         }
     }

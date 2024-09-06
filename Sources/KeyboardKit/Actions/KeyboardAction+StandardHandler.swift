@@ -60,7 +60,6 @@ extension KeyboardAction {
         ///   - autocompleteService: The autocomplete service to use.
         ///   - feedbackContext: The feedback context to use.
         ///   - feedbackService: The feedback service to use.
-        ///   - frequentEmojiProvider: The frequent emoji provider to use.
         ///   - spaceDragGestureHandler: The space gesture handler to use.
         public init(
             controller: KeyboardController?,

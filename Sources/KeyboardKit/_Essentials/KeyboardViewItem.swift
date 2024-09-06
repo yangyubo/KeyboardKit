@@ -9,20 +9,54 @@
 import SwiftUI
 
 /// This view renders button item for a ``KeyboardView``.
+///
+/// The reason why the ``KeyboardView`` doesn't just use the
+/// ``Keyboard/Button`` view, is that this view applies more
+/// stuff to the content.
+///
+/// `TODO` KeyboardKit 9.0 should change ``KeyboardView`` to
+/// not use this view, but rather uses a ``Keyboard/Button``,
+/// which should then apply the proper styles, insets, etc.
 public struct KeyboardViewItem<Content: View>: View {
 
     /// Create a keyboard view item.
     ///
     /// - Parameters:
     ///   - item: The layout item to use within the item.
+    ///   - isNextProbability: The probability in percent (0-1) that this button is the next to be tapped, by default `0`.
     ///   - actionHandler: The button style to apply.
     ///   - repeatTimer: The repeat timer to use, if any.
-    ///   - styleProvider: The style provider to use.
+    ///   - styleService: The style service to use.
     ///   - keyboardContext: The keyboard context to which the item should apply.,
     ///   - calloutContext: The callout context to affect, if any.
     ///   - keyboardWidth: The total width of the keyboard.
     ///   - inputWidth: The input width within the keyboard.
     ///   - content: The content view to use within the item.
+    init(
+        item: KeyboardLayout.Item,
+        isNextProbability: Double = 0,
+        actionHandler: KeyboardActionHandler,
+        repeatTimer: GestureButtonTimer? = nil,
+        styleService: KeyboardStyleService,
+        keyboardContext: KeyboardContext,
+        calloutContext: CalloutContext?,
+        keyboardWidth: CGFloat,
+        inputWidth: CGFloat,
+        content: Content
+    ) {
+        self.item = item
+        self.isNextProbability = isNextProbability
+        self.actionHandler = actionHandler
+        self.repeatTimer = repeatTimer
+        self.styleService = styleService
+        self._keyboardContext = ObservedObject(wrappedValue: keyboardContext)
+        self.calloutContext = calloutContext
+        self.keyboardWidth = keyboardWidth
+        self.inputWidth = inputWidth
+        self.content = content
+    }
+
+    @available(*, deprecated, message: "Use the style service initializer instead.")
     init(
         item: KeyboardLayout.Item,
         actionHandler: KeyboardActionHandler,
@@ -35,20 +69,22 @@ public struct KeyboardViewItem<Content: View>: View {
         content: Content
     ) {
         self.item = item
+        self.isNextProbability = 0
         self.actionHandler = actionHandler
         self.repeatTimer = repeatTimer
-        self.styleProvider = styleProvider
+        self.styleService = styleProvider
         self._keyboardContext = ObservedObject(wrappedValue: keyboardContext)
         self.calloutContext = calloutContext
         self.keyboardWidth = keyboardWidth
         self.inputWidth = inputWidth
         self.content = content
     }
-    
+
     private let item: KeyboardLayout.Item
+    private let isNextProbability: Double
     private let actionHandler: KeyboardActionHandler
     private let repeatTimer: GestureButtonTimer?
-    private let styleProvider: KeyboardStyleProvider
+    private let styleService: KeyboardStyleService
     private let calloutContext: CalloutContext?
     private let keyboardWidth: CGFloat
     private let inputWidth: CGFloat
@@ -62,7 +98,7 @@ public struct KeyboardViewItem<Content: View>: View {
     
     public var body: some View {
         ZStack(alignment: item.alignment) {
-            Color.clear
+            Color.clearInteractable
             content
         }
         .opacity(contentOpacity)
@@ -70,7 +106,9 @@ public struct KeyboardViewItem<Content: View>: View {
         .keyboardLayoutItemSize(
             for: item,
             rowWidth: keyboardWidth,
-            inputWidth: inputWidth)
+            inputWidth: inputWidth
+        )
+        .background(Color.clearInteractable)
         .keyboardButton(
             for: item.action,
             isPressed: $isPressed,
@@ -79,16 +117,34 @@ public struct KeyboardViewItem<Content: View>: View {
             keyboardContext: keyboardContext,
             calloutContext: calloutContext,
             edgeInsets: item.edgeInsets,
+            additionalTapArea: isNextProbability * 5,
             repeatTimer: repeatTimer
         )
     }
-    
+
     private var contentOpacity: Double {
         keyboardContext.isSpaceDragGestureActive ? 0 : 1
     }
     
     private var buttonStyle: Keyboard.ButtonStyle {
-        item.action.isSpacer ? .spacer : styleProvider.buttonStyle(for: item.action, isPressed: isPressed)
+        item.action.isSpacer ? .spacer : styleService.buttonStyle(for: item.action, isPressed: isPressed)
+    }
+}
+
+private extension View {
+    
+    @ViewBuilder
+    func additionalTapArea(_ points: Double) -> some View {
+        if points > 0 {
+            self.zIndex(points)
+                .overlay(
+                    Color.clearInteractable
+                        .opacity(0.3)
+                        .padding(-points)
+                )
+        } else {
+            self
+        }
     }
 }
 
@@ -102,12 +158,12 @@ public struct KeyboardViewItem<Content: View>: View {
             edgeInsets: .init(horizontal: 10, vertical: 10)
         ),
         actionHandler: .preview,
-        styleProvider: .preview,
+        styleService: .preview,
         keyboardContext: .preview,
         calloutContext: .preview,
         keyboardWidth: 100,
         inputWidth: 100,
         content: Text("HEJ")
     )
-    .background(Color.red)
+    .background(Color.yellow)
 }

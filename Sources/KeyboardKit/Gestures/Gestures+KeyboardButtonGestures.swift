@@ -120,9 +120,9 @@ private extension Gestures.KeyboardButtonGestures {
     }
 
     func handleGestureEnded(in geo: GeometryProxy) {
-        endActionCallout()
-        calloutContext?.inputContext.resetWithDelay()
+        calloutContext?.actionContext.endDragGesture()
         calloutContext?.actionContext.reset()
+        calloutContext?.inputContext.resetWithDelay()
         resetGestureState()
         endAction?()
     }
@@ -157,10 +157,6 @@ private extension Gestures.KeyboardButtonGestures {
         context.updateInputs(for: action, in: geo)
         guard context.isActive else { return }
         calloutContext?.inputContext.reset()
-    }
-
-    func endActionCallout() {
-        calloutContext?.actionContext.endDragGesture()
     }
 
     func resetGestureState() {

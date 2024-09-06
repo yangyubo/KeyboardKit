@@ -38,14 +38,11 @@ extension Color: Codable {
         self.init(red: r, green: g, blue: b, opacity: a)
     }
 
-    /**
-     Encode the color, using an encoder.
-
-     Note that encoding dynamic colors that support features
-     like dark mode, high contrast etc. will cause the color
-     value that is encoded to only contain the current color
-     information.
-     */
+    /// Encode the color with the provided encoder.
+    ///
+    /// Note that encoding colors that support features like
+    /// dark mode, high contrast, etc. will only persist the
+    /// current color information.
     public func encode(to encoder: Encoder) throws {
         guard let colorComponents = self.colorComponents else { return }
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -72,7 +69,6 @@ private extension Color {
         
         #if os(macOS)
         SystemColor(self).getRed(&r, green: &g, blue: &b, alpha: &a)
-        // Note that non RGB color will raise an exception, that I don't now how to catch because it is an Objc exception.
         #else
         guard SystemColor(self).getRed(&r, green: &g, blue: &b, alpha: &a) else {
             // Pay attention that the color should be convertible into RGB format
@@ -80,7 +76,6 @@ private extension Color {
             return nil
         }
         #endif
-        
         return (r, g, b, a)
     }
 }

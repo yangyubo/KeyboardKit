@@ -55,7 +55,7 @@ public struct KeyboardAppView<Content: View>: View {
         for app: KeyboardApp,
         @ViewBuilder content: @escaping () -> Content
     ) {
-        KeyboardSettings.setup(for: app)
+        KeyboardSettings.setupStore(for: app)
         let state = Keyboard.State()
         state.setup(for: app)
 
@@ -101,24 +101,9 @@ public struct KeyboardAppView<Content: View>: View {
     }
 }
 
-private extension KeyboardSettings {
-
-    static func setup(for app: KeyboardApp) {
-        guard let appGroupId = app.appGroupId else { return }
-        setupStore(withAppGroup: appGroupId)
-    }
-}
-
 private extension Keyboard.State {
 
     func setup(for app: KeyboardApp) {
-        setupDictationContext(for: app)
-    }
-
-    func setupDictationContext(
-        for app: KeyboardApp
-    ) {
-        guard let config = app.dictationConfiguration else { return }
-        self.dictationContext = .init(config: config)
+        dictationContext.setup(for: app)
     }
 }

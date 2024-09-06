@@ -1,5 +1,5 @@
 //
-//  DemoStyleProvider.swift
+//  DemoStyleService.swift
 //  Keyboard
 //
 //  Created by Daniel Saidi on 2022-12-21.
@@ -14,18 +14,13 @@ import KeyboardKitPro
 
 import SwiftUI
 
-/// This provider inherits the standard provider, then makes
+/// This service inherits the standard base class then makes
 /// demo-specific adjustments to the standard style.
 ///
-/// The provider will only style the rocket button, to avoid
-/// making too many potentially confusing changes.
-///
-/// You can play around with the class to see how it affects
-/// the demo keyboard.
-///
-/// The ``KeyboardViewController`` shows how you can replace
-/// the standard provider with this custom one.
-class DemoStyleProvider: KeyboardStyle.StandardProvider {
+/// This service will only style the rocket button, to avoid
+/// making too many confusing changes. You can play with the
+/// code below to see how it affects the keyboard.
+class DemoStyleService: KeyboardStyle.StandardService {
     
     override func buttonFontSize(
         for action: KeyboardAction

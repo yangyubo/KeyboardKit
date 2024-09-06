@@ -11,23 +11,38 @@
     @PageColor(blue)
 }
 
-This article describes the KeyboardKit theme engine.
+This article describes the KeyboardKit Pro theme engine, which can be used to style the entire keyboard with a single theme that defines all applicable styles.
 
-👑 [KeyboardKit Pro][Pro] unlocks a theme engine and a ``KeyboardTheme`` type that makes it easier to style your keyboard, as well as many predefined themes and theme-based views. You can easily create your own themes as well.
+👑 [KeyboardKit Pro][Pro] unlocks a theme engine that makes it easier to style your keyboard, as well as many predefined themes and theme-based views. You can easily create your own themes as well.
 
 [Pro]: https://github.com/KeyboardKit/KeyboardKitPro
+
+
+## Keyboard Theme Namespace
+
+KeyboardKit has a ``KeyboardTheme`` type that is also a namespace for theme-related types and views, like ``KeyboardTheme/Shelf`` and ``KeyboardTheme/ShelfItem``.
+
+
+
+## Keyboard Theme Context
+
+KeyboardKit has an observable ``KeyboardThemeContext`` that persistent, observable settings, such as  ``KeyboardThemeContext/theme``.
+
+KeyboardKit automatically creates an instance of this class, injects it into ``KeyboardInputViewController/state`` and updates it whenever the theme changes.
+
 
 
 ## What is a theme?
 
 A ``KeyboardTheme`` can provide keyboard-related styles in a way that can be easily used and modified. A theme can also define style variations that can be used to customize a constrained set of theme properties.
 
-KeyboardKit Pro also unlocks a ``KeyboardStyle/ThemeBasedProvider``, which can be used to apply a theme with the ``KeyboardStyleProvider`` concept that is used by some views, like the ``KeyboardView``.
+KeyboardKit Pro unlocks a bunch of themes and style variations, as well as a ``KeyboardStyle/ThemeBasedService`` that can be used to apply themes with the ``KeyboardStyleService`` concept that is used by some views, like the ``KeyboardView``.
+
 
 
 ## Predefined themes
 
-KeyboardKit has many predefined themes, like ``KeyboardTheme/standard``, ``KeyboardTheme/swifty`` and ``KeyboardTheme/minimal``. These themes also have style variations, that lets you vary their appearance, like the standard theme's ``KeyboardTheme/StandardStyle/blue`` and ``KeyboardTheme/StandardStyle/green`` variations:
+KeyboardKit Pro unlocks many predefined themes, like ``KeyboardTheme/standard``, ``KeyboardTheme/swifty`` and ``KeyboardTheme/minimal``. All themes also have style variations that let you vary parts of their appearance, like the standard theme's ``KeyboardTheme/StandardStyle/blue`` and ``KeyboardTheme/StandardStyle/green`` variations:
 
 @TabNavigator {
     @Tab(".standard") {
@@ -71,7 +86,7 @@ KeyboardKit has many predefined themes, like ``KeyboardTheme/standard``, ``Keybo
     }
 }
 
-KeyboardKit Pro also unlocks other, more expressive, themes, which provide their own unique visual baseline:
+KeyboardKit Pro also unlocks other more expressive themes, which provide their own unique visual baseline. You can use them to make your keyboard really stand out:
 
 @TabNavigator {
     @Tab(".aesthetic") {
@@ -136,7 +151,7 @@ You can get a list of all predefined themes, as well as all pre-defined style va
 
 ## How to apply a theme
 
-You can apply theme with the ``KeyboardStyle/ThemeBasedProvider`` style provider, or the ``KeyboardStyleProvider/themed(with:keyboardContext:)`` shorthand:
+You can apply any theme with a ``KeyboardStyle/ThemeBasedService`` style service, or the ``KeyboardStyleService/themed(with:keyboardContext:)`` shorthand:
 
 ```swift
 override func viewWillSetupKeyboard() {
@@ -144,10 +159,10 @@ override func viewWillSetupKeyboard() {
 
     // Setup KeyboardKit Pro with a license
     setupPro(withLicenseKey: "...") { license in
-        services.styleProvider = .themed(
+        services.styleService = .themed(
             with: .standard,
             keyboardContext: state.keyboardContext,
-            fallback: services.styleProvider
+            fallback: services.styleService
         )
     } view: { controller in
         // Return your keyboard view here
@@ -155,7 +170,7 @@ override func viewWillSetupKeyboard() {
 }
 ```
 
-You can inherit ``KeyboardStyle/ThemeBasedProvider`` to customize the theme even further, which lets you mix the benefits of themes and styles.
+You can inherit ``KeyboardStyle/ThemeBasedService`` to customize the theme even further, which lets you mix the benefits of themes and styles.
 
 
 ## How to create a custom theme

@@ -144,6 +144,9 @@ public extension KeyboardApp {
 
     /// 👑 This view is unlocked by KeyboardKit Pro.
     struct SettingsScreen {}
+
+    /// 👑 This view is unlocked by KeyboardKit Pro.
+    struct ThemeScreen {}
 }
 
 /// 👑 This is unlocked by KeyboardKit Pro.
@@ -215,16 +218,16 @@ public extension KeyboardStatus {
 public extension KeyboardStyle {
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    class ThemeBasedProvider {}
+    class ThemeBasedService {}
 }
 
-public extension KeyboardStyleProvider {
-    
+public extension KeyboardStyleService {
+
     /// 👑 This is unlocked by KeyboardKit Pro.
     static func themed(
         with theme: KeyboardTheme,
         keyboardContext: KeyboardContext
-    ) throws -> KeyboardStyle.ThemeBasedProvider {
+    ) throws -> KeyboardStyle.ThemeBasedService {
         throw ProPlaceholderError.proPlaceholder
     }
     
@@ -232,8 +235,8 @@ public extension KeyboardStyleProvider {
     static func themed(
         with theme: KeyboardTheme,
         keyboardContext: KeyboardContext,
-        fallback: KeyboardStyleProvider
-    ) -> any KeyboardStyleProvider {
+        fallback: KeyboardStyleService
+    ) -> any KeyboardStyleService {
         fallback
     }
 }
@@ -244,31 +247,30 @@ public struct KeyboardTextField {}
 /// 👑 This is unlocked by KeyboardKit Pro.
 public struct KeyboardTextView {}
 
-/// 👑 This is unlocked by KeyboardKit Pro.
-public struct KeyboardTheme {
-    
+public extension KeyboardTheme {
+
     /// 👑 This is unlocked by KeyboardKit Pro.
-    public static var allPredefined: [KeyboardTheme] {
+    static var allPredefined: [KeyboardTheme] {
         get throws { throw ProPlaceholderError.proPlaceholder }
     }
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    public static var standard: KeyboardTheme {
+    static var standard: KeyboardTheme {
         get throws { throw ProPlaceholderError.proPlaceholder }
     }
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    public static var swifty: KeyboardTheme {
+    static var swifty: KeyboardTheme {
         get throws { throw ProPlaceholderError.proPlaceholder }
     }
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    public static var minimal: KeyboardTheme {
+    static var minimal: KeyboardTheme {
         get throws { throw ProPlaceholderError.proPlaceholder }
     }
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    public struct StandardStyle: KeyboardThemeStyleVariation {
+    struct StandardStyle: KeyboardThemeStyleVariation {
     
         /// 👑 This is unlocked by KeyboardKit Pro.
         public static let standard = Self()
@@ -281,10 +283,10 @@ public struct KeyboardTheme {
     }
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    public struct Shelf {}
+    struct Shelf {}
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    public struct ShelfItem {}
+    struct ShelfItem {}
 }
     
 /// 👑 This is unlocked by KeyboardKit Pro.
@@ -312,8 +314,8 @@ public protocol SpeechRecognizer {}
 /// 👑 This is unlocked by KeyboardKit Pro.
 public struct KeyboardViewPreview {}
 
-@available(*, deprecated, renamed: "KeyboardStyle.ThemeBasedProvider")
-public typealias ThemeBasedKeyboardStyleProvider = KeyboardStyle.StandardProvider
+@available(*, deprecated, renamed: "KeyboardStyle.ThemeBasedService")
+public typealias ThemeBasedKeyboardStyleProvider = KeyboardStyle.StandardService
 
 #if os(iOS) || os(tvOS) || os(visionOS)
 public extension UITextDocumentProxy {

@@ -151,9 +151,11 @@ public extension DictationContext {
 
     /// Reset the context.
     func reset() {
-        isDictating = false
-        isDictationStartedByKeyboard = false
-        dictatedText = ""
+        DispatchQueue.main.async {
+            self.isDictating = false
+            self.isDictationStartedByKeyboard = false
+            self.dictatedText = ""
+        }
     }
 
     /// Set ``isDictating`` with an animation.
@@ -161,6 +163,12 @@ public extension DictationContext {
         withAnimation {
             isDictating = value
         }
+    }
+
+    /// Setup the context for a keyboard app.
+    func setup(for app: KeyboardApp) {
+        guard let config = app.dictationConfiguration else { return }
+        setup(with: config)
     }
 
     /// Setup the context with an app-specific configuration.

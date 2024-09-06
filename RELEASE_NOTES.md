@@ -22,21 +22,44 @@ KeyboardKit 9 is planned to be released shortly after the public release of iOS 
 
 ## 8.9
 
-This version makes the emoji keyboard work in iOS 18.
+This version continues to reduce the SDK surface area and to rename types to make things more consistent for the 9.0 release.
+
+This version also makes the emoji keyboard work in iOS 18.
+
+This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to make it possible to add a new theme context to the SDK. 
 
 ### ✨ Features
 
 * `GestureButton` is a new gesture button implementation.
 * `GestureButtonTimer` is a new gesture button timer implementation.
+* `Image` has a new `keyboardTheme` extension.
+* `Keyboard.NumberPad` is a new keyboard view.
 * `Keyboard.State` has a new, shared `repeatTimer` for repeat gestures.
+* `KeyboardApp` has a new `deepLinks` property.
+* `KeyboardApp` has a new `keyboardExtensionBundleId` property.
+* `KeyboardApp` has a new `keyboardExtensionBundleIdWildcard` property.
+* `KeyboardSettings` & `DictationContext` can now be set up for an app.
+* `KeyboardThemeContext` is a new context type for theme-related state.
+* `KeyboardView` now applies next character probabilities to its items.
+* `KeyboardViewItem` now applies next character probability to the button modifier. 
+* `View+KeyboardButton` now supports applying an extended tap area, which also affects z-index.
+
+### 👑 KeyboardKit Pro
+
+* `KeyboardApp.HomeScreen` can now opt-in to link to the themes screen.
+* `KeyboardApp.ThemeScreen` is a new screen that can be used as the main theme picker screen. 
 
 ### 💡 Adjustments
 
-* `Keyboard.Button` and many other places now let you inject a custom repeat timer.
+* `Color` extensions are now moved to the `Styling` namespace.
+* `Image` extensions are now moved to the `Styling` namespace.
+* `Keyboard.Button` and many other places now let you inject a custom repeat timer. 
+* `KeyboardApp` `licenseKey` is no longer optional, but defaults to empty.
 
 ### 🗑️ Deprecations & Renamings
 
 * `Gestures.GestureButton` and `Gestures.ScrollViewGestureButton` have been deprecated.
+* `KeyboardStyleProvider` and its related types are renamed to `KeyboardStyleService`.
 
 
 
