@@ -11,14 +11,14 @@
 
 import KeyboardKitPro
 
-extension KeyboardStyle {
-    typealias StandardService = KeyboardStyle.StandardProvider
-    typealias ThemeBasedService = KeyboardStyle.ThemeBasedProvider
-}
-typealias KeyboarsStyleService = KeyboardStyleProvider
-extension Keyboard.Services {
-    var styleService: KeyboarsStyleService {
-        get { styleProvider }
-        set { styleProvider = newValue }
-    }
-}
+//extension KeyboardStyle {
+//    typealias StandardService = KeyboardStyle.StandardProvider
+//    typealias ThemeBasedService = KeyboardStyle.ThemeBasedProvider
+//}
+//typealias KeyboarsStyleService = KeyboardStyleProvider
+//extension Keyboard.Services {
+//    var styleService: KeyboarsStyleService {
+//        get { styleProvider }
+//        set { styleProvider = newValue }
+//    }
+//}

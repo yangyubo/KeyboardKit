@@ -32,8 +32,7 @@ public extension KeyboardApp {
             licenseKey: "299B33C6-061C-4285-8189-90525BCAF098",
             bundleId: "com.keyboardkit.demo",
             appGroupId: "group.com.keyboardkit.demo",
-            locales: .all,
-            dictationDeepLink: "kkdemo://dictation"
+            locales: .all
         )
     }
 }
