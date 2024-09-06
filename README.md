@@ -99,7 +99,8 @@ KeyboardKit provides a basic keyboard layout with basic callout actions. [Keybo
 KeyboardKit comes packed with features to help you build amazing keyboard extensions:
 
 * ⌨️ [Essentials][Essentials] - KeyboardKit provides essential utilities, types & views.
-* 💥 [Actions][Actions] - KeyboardKit makes it easy to trigger keyboard-related actions.
+* 💥 [Actions][Actions] - KeyboardKit makes it easy handle keyboard-specific actions.
+* 📱 [App][App] - KeyboardKit has an app model that makes it easy to set up your keyboard.
 * 💡 [Autocomplete][Autocomplete] - KeyboardKit has ways to perform autocomplete.
 * 🗯 [Callouts][Callouts] - KeyboardKit can show input & secondary action callouts.
 * 🖥️ [Device][Device] - KeyboardKit has device-specific utilities.

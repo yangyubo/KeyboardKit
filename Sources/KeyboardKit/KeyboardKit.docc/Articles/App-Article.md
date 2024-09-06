@@ -1,4 +1,4 @@
-# App Utilities
+# App
 
 This article describes the KeyboardKit app-specific utilities.
 
@@ -27,33 +27,49 @@ KeyboardKit has a ``KeyboardApp`` struct that is also a namespace for app-relate
 
 ## Keyboard App
 
-The ``KeyboardApp`` type can be used to define important properties for your app, such as ``KeyboardApp/name``, ``KeyboardApp/licenseKey`` (for KeyboardKit Pro), ``KeyboardApp/bundleId`` (for keyboard status inspection), ``KeyboardApp/appGroupId`` (sync data between the app and keyboard), deep links, etc.
-
-You can create a static app value and add it to both the main app target and its keyboard extension target, to easily refer to it from both:
+The ``KeyboardApp`` type can be used to define important properties for your app, such as ``KeyboardApp/name``, ``KeyboardApp/licenseKey`` (for KeyboardKit Pro), ``KeyboardApp/bundleId`` (for keyboard status inspection), ``KeyboardApp/appGroupId`` (sync data between the app and keyboard), ``KeyboardApp/deepLinks-swift.property``, etc:
 
 ```swift
-static var keyboardKitDemo: Self {
-    .init(
-        name: "KeyboardKit",
-        licenseKey: "abc123",
-        bundleId: "com.keyboardkit.demo",
-        appGroupId: "group.com.keyboardkit.demo",
-        locales: [.english, .swedish, .persian],
-        deepLinks: .init(app: "keyboardkit://")
-    )
+extension KeyboardApp {
+
+    static var keyboardKitDemo: Self {
+        .init(
+            name: "KeyboardKit",
+            licenseKey: "abc123",
+            bundleId: "com.keyboardkit.demo",
+            appDeepLink: "kkdemo://",
+            appGroupId: "group.com.keyboardkit.demo",
+            locales: [.english, .swedish, .persian]
+        )
+    }
 }
 ```
 
-Your app-specific ``KeyboardApp`` can also resolve other properties that you may need, such as a ``KeyboardApp/dictationConfiguration``. It will be even more used in future versions of KeyboardKit, so make sure to start using it today.
+The app will apply default values to things you don't provide. For instance, ``KeyboardApp/keyboardExtensionBundleId`` appends `/keyboard` to ``KeyboardApp/bundleId`` if you don't provide one. The app can also derive things like ``KeyboardApp/dictationConfiguration``.
 
 > Important: The ``KeyboardApp``'s ``KeyboardApp/locales`` collection is only meant to describe which locales you *want* to use in your app and keyboard. It will be capped to the number of locales that your KeyboardKit Pro license includes.
 
 
-## Keyboard App View
 
-The ``KeyboardAppView`` view can be used as the root view of a keyboard app target, to set up everything it needs to use KeyboardKit.
+### How to set up the keyboard extension with a keyboard app 
 
-To use it, just create a ``KeyboardApp`` value as described above, then pass it into the ``KeyboardAppView`` with your app content view:
+The ``KeyboardInputViewController`` has ``KeyboardApp``-based setup functions that will set up ``KeyboardSettings`` with an App Group, register your KeyboardKit Pro license key, etc.
+
+```swift
+class KeyboardController: UIInputViewController {
+
+    func viewWillSetupKeyboard() {
+        super.viewWillSetupKeyboard()
+        setup(for: .keyboardKitDemo) {
+            // Define your view here...
+        }
+    }
+}
+```
+
+### How to set up the main app with a keyboard app
+
+The main app can use a ``KeyboardAppView`` view as the root view of a keyboard app target, to set up everything it needs:
 
 ```swift
 @main
@@ -68,22 +84,7 @@ struct MyApp: App {
 }
 ```
 
-This view will set up ``KeyboardSettings`` to use an App Group, register your KeyboardKit Pro license key, if any, and inject ``Keyboard/State`` types into the view, which means that you can access any state value like this:
-
-```swift
-struct MyView: View {
-
-    @EnvironmentObject
-    var keyboardContext: KeyboardContext
-
-    var body: View {
-        ...
-    }
-}
-```
-
-You can then change any states from any view within your app, to customize them to fit your need. These contexts will also be used by the KeyboardKit Pro screens that are described below.
-
+You keyboard and main app will set up anything that the keyboard app defines, which means that you don't have to configure things like App Group syncing, dictation, deep links, etc. Just define them in your ``KeyboardApp`` and KeyboardKit takes care of the rest.
 
 
 ## 👑 KeyboardKit Pro

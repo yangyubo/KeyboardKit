@@ -48,7 +48,7 @@ class KeyboardViewController: KeyboardInputViewController {
         super.viewWillSetupKeyboard()
 
         /// 💡 Make the demo use a standard ``KeyboardView``.
-        setup { controller in
+        setup(for: .demoApp) { controller in
             KeyboardView(
                 state: controller.state,
                 services: controller.services,

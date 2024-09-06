@@ -127,30 +127,58 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     @available(*, deprecated, message: "Use the setupPro licenseError parameter instead.")
     public var setupProError: Error?
 
-    /// Setup KeyboardKit with a custom keyboard view.
+    /// Set up KeyboardKit for a ``KeyboardApp``.
     ///
-    /// > Warning: Make sure to read the class documentation
-    /// for important information on the unowned `controller`
-    /// reference that is passed to the `view` builder. Make
-    /// sure to use `[weak self]` or `[unowned self]` if the
-    /// `view` builder needs to refer to your specific class.
+    /// > Important: ``<doc:Getting-Started>`` has important
+    /// information on how to set up KeyboardKit.
+    open func setup(
+        for app: KeyboardApp?
+    ) {
+        guard let app else { return }
+        KeyboardSettings.setupStore(for: app)
+    }
+
+    /// Setup KeyboardKit for a ``KeyboardApp`` and a custom
+    /// keyboard view.
+    ///
+    /// > Important: ``<doc:Getting-Started>`` has important
+    /// information on how to set up KeyboardKit.
     open func setup<Content: View>(
+        for app: KeyboardApp? = nil,
+        withRootView view: Content
+    ) {
+        setup(for: app)
+        self.children.forEach { $0.removeFromParent() }
+        self.view.subviews.forEach { $0.removeFromSuperview() }
+        let view = view
+            .keyboardSettings(self.settings)
+            .keyboardState(self.state)
+        let host = KeyboardHostingController(rootView: view)
+        host.add(to: self)
+    }
+
+    /// Setup KeyboardKit for a ``KeyboardApp`` and a custom
+    /// keyboard view.
+    ///
+    /// > Important: ``<doc:Getting-Started>`` has important
+    /// information on how to set up KeyboardKit.
+    open func setup<Content: View>(
+        for app: KeyboardApp? = nil,
         with view: @autoclosure @escaping () -> Content
     ) {
-        setup(withRootView: Keyboard.RootView(view))
+        setup(for: app, withRootView: Keyboard.RootView(view))
     }
     
-    /// Setup KeyboardKit with a custom keyboard view.
+    /// Setup KeyboardKit for a ``KeyboardApp`` and a custom
+    /// keyboard view.
     ///
-    /// > Warning: Make sure to read the class documentation
-    /// for important information on the unowned `controller`
-    /// reference that is passed to the `view` builder. Make
-    /// sure to use `[weak self]` or `[unowned self]` if the
-    /// `view` builder needs to refer to your specific class.
+    /// > Important: ``<doc:Getting-Started>`` has important
+    /// information on how to set up KeyboardKit.
     open func setup<Content: View>(
+        for app: KeyboardApp? = nil,
         with view: @escaping (_ controller: KeyboardInputViewController) -> Content
     ) {
-        setup(withRootView: Keyboard.RootView { [weak self] in
+        setup(for: app, withRootView: Keyboard.RootView { [weak self] in
             guard let self else { return view(.preview) }
             unowned let controller = self
             return view(controller)

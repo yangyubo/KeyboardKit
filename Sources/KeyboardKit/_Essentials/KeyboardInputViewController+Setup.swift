@@ -10,21 +10,8 @@
 import SwiftUI
 
 extension KeyboardInputViewController {
-    
-    /// Setup the controller with a custom root view.
-    func setup<Content: View>(
-        withRootView view: Content
-    ) {
-        self.children.forEach { $0.removeFromParent() }
-        self.view.subviews.forEach { $0.removeFromSuperview() }
-        let view = view
-            .keyboardSettings(self.settings)
-            .keyboardState(self.state)
-        let host = KeyboardHostingController(rootView: view)
-        host.add(to: self)
-    }
-    
-    /// Setup the controller when it has loaded.
+
+    /// Set up the controller when it has loaded.
     func setupController() {
         setupContexts()
         setupInitialWidth()

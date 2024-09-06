@@ -12,6 +12,17 @@ import SwiftUI
 import UIKit
 #endif
 
+/// 👑 This is unlocked by KeyboardKit Pro.
+public struct License {
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    public static var current: License { .init() }
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    public static func register(licenseKey: String, _ locales: [KeyboardLocale]) {}
+}
+
+
 enum ProPlaceholderError: LocalizedError, View {
     
     case proPlaceholder

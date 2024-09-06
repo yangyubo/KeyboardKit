@@ -22,22 +22,23 @@ KeyboardKit 9 is planned to be released shortly after the public release of iOS 
 
 ## 8.9
 
-This version continues to reduce the SDK surface area and to rename types to make things more consistent for the 9.0 release.
+This version renames types to make things more consistent for the 9.0 release, and makes the emoji keyboard work for Xcode 16 and iOS 18.
 
-This version also makes the emoji keyboard work in iOS 18.
+This version adds a new `GestureButton` component as an inline-synced dependency, and therefore exposes its public types in the root namespace.
 
-This version also moves the basic `KeyboardTheme` model from KeyboardKit Pro to make it possible to add a new theme context to the SDK. 
+This version also adds a `KeyboardThemeContext` that can persist the current theme in KeyboardKit Pro, adds a new `Keyboard.NumberPad` view, adds support for dynamic tap areas, and makes it possible to easily set up the main app and keyboard with a `KeyboardApp`. 
 
 ### ✨ Features
 
-* `GestureButton` is a new gesture button implementation.
-* `GestureButtonTimer` is a new gesture button timer implementation.
+* `GestureButton` is a new gesture button.
+* `GestureButtonTimer` is a new gesture timer.
 * `Image` has a new `keyboardTheme` extension.
 * `Keyboard.NumberPad` is a new keyboard view.
 * `Keyboard.State` has a new, shared `repeatTimer` for repeat gestures.
-* `KeyboardApp` has a new `deepLinks` property.
-* `KeyboardApp` has a new `keyboardExtensionBundleId` property.
+* `KeyboardApp` has a new `deepLinks` property to define several links.
+* `KeyboardApp` has a new `keyboardExtensionBundleId` and property.
 * `KeyboardApp` has a new `keyboardExtensionBundleIdWildcard` property.
+* `KeyboardInputViewController` has `KeyboardApp`-based setup functions. 
 * `KeyboardSettings` & `DictationContext` can now be set up for an app.
 * `KeyboardThemeContext` is a new context type for theme-related state.
 * `KeyboardView` now applies next character probabilities to its items.
