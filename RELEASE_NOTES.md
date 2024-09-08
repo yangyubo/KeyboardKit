@@ -66,6 +66,14 @@ This version also adds a `KeyboardThemeContext` that can persist the current the
 
 
 
+## 8.8.4
+
+### 🐛 Bug fixes
+
+* This patch fixes a `KeyboardAppView` bug that caused the locale to be strictly set to the first locale in the license, which did reset any manual changes. 
+
+
+
 ## 8.8.2
 
 This version fixes a keyboard button gesture bug.
