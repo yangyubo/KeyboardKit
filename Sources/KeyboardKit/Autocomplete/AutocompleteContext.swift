@@ -13,25 +13,8 @@ import SwiftUI
 /// for keyboard-related autocomplete.
 ///
 /// The ``suggestions`` property is automatically updated as
-/// the user types or the current text changes. The property
-/// honors ``suggestionsDisplayCount`` by capping the number
-/// of suggestions in ``suggestionsFromService``.
-///
-/// The ``isAutocompleteEnabled`` and ``isAutocorrectEnabled``
-/// settings can be used to control whether autocomplete and
-/// autocorrect are enabled. A ``KeyboardInputViewController``
-/// will however check even more places before performing it.
-///
-/// The ``isAutolearnEnabled`` settings property can be used
-/// to control if the keyboard should auto-learn any unknown
-/// suggestions that are applied, provided that your service
-/// supports learning suggestions.
-///
-/// The ``isNextCharacterPredictionEnabled`` settings can be
-/// used to set if next character prediction is enabled. The
-/// ``nextCharacterProbabilities`` dictionary should then be
-/// set (today by the controller) after which it can be used
-/// by the ``nextCharacterProbability(for:)-5ajjk`` function.
+/// the user types and honors ``suggestionsDisplayCount`` by
+/// capping the original ``suggestionsFromService``.
 ///
 /// KeyboardKit will automatically setup an instance of this
 /// class in ``KeyboardInputViewController/state``, then use
@@ -80,13 +63,13 @@ public class AutocompleteContext: ObservableObject {
     public var suggestionsDisplayCount = 3
 
 
-    // MARK: - Properties
+    // MARK: - Observable Properties
 
     /// This localized dictionary can be used to define more,
     /// custom autocorrections for the various locales.
     ///
-    /// Note that it's already initialized with a well-known
-    /// set of autocorrections, so make sure to append to it.
+    /// This dictionary is pre-populated with the dictionary
+    /// ``Autocomplete/TextReplacementDictionary/additionalAutocorrections``.
     @Published
     public var autocorrectDictionary = Autocomplete.TextReplacementDictionary.additionalAutocorrections
 
@@ -122,9 +105,12 @@ public class AutocompleteContext: ObservableObject {
             suggestions = Array(capped)
         }
     }
+}
+
+public extension AutocompleteContext {
 
     /// Reset the autocomplete contexts.
-    public func reset() {
+    func reset() {
         isLoading = false
         lastError = nil
         suggestions = []

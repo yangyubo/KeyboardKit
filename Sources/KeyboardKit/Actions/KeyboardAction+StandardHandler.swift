@@ -144,23 +144,15 @@ extension KeyboardAction {
             handle(gesture, on: action, replaced: false)
         }
 
-        /// Handle a certain autocomplete suggestion.
-        open func handle(
-            _ suggestion: Autocomplete.Suggestion
-        ) {
-            if suggestion.isUnknown, autocompleteContext.isAutolearnEnabled {
-                autocompleteService?.learn(suggestion)
-            }
-            keyboardContext.insertAutocompleteSuggestion(suggestion)
-            handle(.release, on: .character(""))
-        }
-
-        /// Handle a certain action gesture, with replace logic.
+        /// Handle a certain keyboard action gesture, with a
+        /// `replaced` property that indicates if the action
+        /// has been replaced by the system.
         open func handle(
             _ gesture: Keyboard.Gesture,
             on action: KeyboardAction,
             replaced: Bool
         ) {
+            tryUpdateAutocompleteState(for: gesture, on: action)
             if !replaced && tryHandleReplacementAction(before: gesture, on: action) { return }
             let gestureAction = self.action(for: gesture, on: action)
             triggerFeedback(for: gesture, on: action)
@@ -176,19 +168,46 @@ extension KeyboardAction {
             tryRegisterEmoji(after: gesture, on: action)
         }
 
+        /// Handle a certain autocomplete suggestion.
+        open func handle(
+            _ suggestion: Autocomplete.Suggestion
+        ) {
+            if suggestion.isUnknown, autocompleteContext.isAutolearnEnabled {
+                autocompleteService?.learn(suggestion)
+            }
+            keyboardContext.insertAutocompleteSuggestion(suggestion)
+            handle(.release, on: .character(""))
+        }
+
         /// Handle a certain keyboard action drag gesture.
         open func handleDrag(
             on action: KeyboardAction,
             from startLocation: CGPoint,
             to currentLocation: CGPoint
         ) {
-            tryHandleSpaceDrag(
+            handleSpaceDrag(
                 on: action,
                 from: startLocation,
                 to: currentLocation
             )
         }
 
+        /// Handle a space key drag gesture.
+        open func handleSpaceDrag(
+            on action: KeyboardAction,
+            from startLocation: CGPoint,
+            to currentLocation: CGPoint
+        ) {
+            guard action == .space else { return }
+            guard keyboardContext.spaceLongPressBehavior == .moveInputCursor else { return }
+            guard keyboardContext.isSpaceDragGestureActive else { return }
+            let activationLocation = spaceDragActivationLocation ?? currentLocation
+            spaceDragActivationLocation = activationLocation
+            spaceDragGestureHandler.handleDragGesture(
+                from: activationLocation,
+                to: currentLocation
+            )
+        }
 
 
         // MARK: - Feedback
@@ -247,22 +266,6 @@ extension KeyboardAction {
             return config.hasCustomFeedback(for: gesture, on: action)
         }
 
-        /// Trigger a certain audio feedback.
-        ///
-        /// The service just uses the ``feedbackService`` to
-        /// trigger the provided feedback.
-        open func triggerAudioFeedback(_ feedback: Feedback.Audio) {
-            feedbackService.triggerAudioFeedback(feedback)
-        }
-
-        /// Trigger a certain haptic feedback.
-        ///
-        /// The service just uses the ``feedbackService`` to
-        /// trigger the provided feedback.
-        open func triggerHapticFeedback(_ feedback: Feedback.Haptic) {
-            feedbackService.triggerHapticFeedback(feedback)
-        }
-
         /// Trigger feedback for a certain action gesture.
         open func triggerFeedback(
             for gesture: Keyboard.Gesture,
@@ -273,6 +276,13 @@ extension KeyboardAction {
             triggerHapticFeedback(for: gesture, on: action)
         }
 
+        /// Trigger a certain audio feedback.
+        open func triggerAudioFeedback(
+            _ feedback: Feedback.Audio
+        ) {
+            feedbackService.triggerAudioFeedback(feedback)
+        }
+
         /// Trigger feedback for a certain action gesture.
         open func triggerAudioFeedback(
             for gesture: Keyboard.Gesture,
@@ -281,6 +291,13 @@ extension KeyboardAction {
             if !shouldTriggerAudioFeedback(for: gesture, on: action) { return }
             guard let feedback = audioFeedback(for: gesture, on: action) else { return }
             triggerAudioFeedback(feedback)
+        }
+
+        /// Trigger a certain haptic feedback.
+        open func triggerHapticFeedback(
+            _ feedback: Feedback.Haptic
+        ) {
+            feedbackService.triggerHapticFeedback(feedback)
         }
 
         /// Trigger feedback for a certain action gesture.
@@ -329,7 +346,6 @@ extension KeyboardAction {
 
             return nil
         }
-
 
         /// Whether to apply autocorrect before an action.
         open func tryApplyAutocorrectSuggestion(
@@ -422,6 +438,40 @@ extension KeyboardAction {
             guard action.shouldRemoveAutocompleteInsertedSpace else { return }
             keyboardContext.tryRemoveAutocompleteInsertedSpace()
         }
+
+        /// Try to update ``autocompleteContext`` for an action gesture.
+        open func tryUpdateAutocompleteState(
+            for gesture: Keyboard.Gesture,
+            on action: KeyboardAction
+        ) {
+            let service = autocompleteService
+            switch action {
+            case .backspace: service?.disableAutocorrectForCurrentWord()
+            case .character(let char):
+                guard char.isWordDelimiter else { return }
+                service?.enableAutocorrectForCurrentWord()
+            case .space: service?.enableAutocorrectForCurrentWord()
+            default: break
+            }
+        }
+
+        /// Try to update space drag state for an action gesture.
+        open func tryUpdateSpaceDragState(
+            for gesture: Keyboard.Gesture,
+            on action: KeyboardAction
+        ) {
+            guard action == .space else { return }
+            switch gesture {
+            case .press:
+                setSpaceDragActive(false)
+                spaceDragActivationLocation = nil
+            case .longPress:
+                setSpaceDragActive(true)
+            case .release, .end:
+                setSpaceDragActive(false)
+            default: break
+            }
+        }
     }
 }
 
@@ -431,39 +481,6 @@ private extension KeyboardAction.StandardHandler {
         guard action == .space else { return false }
         let handler = spaceDragGestureHandler
         return handler.currentDragTextPositionOffset != 0
-    }
-
-    func tryHandleSpaceDrag(
-        on action: KeyboardAction,
-        from startLocation: CGPoint,
-        to currentLocation: CGPoint
-    ) {
-        guard action == .space else { return }
-        guard keyboardContext.spaceLongPressBehavior == .moveInputCursor else { return }
-        guard keyboardContext.isSpaceDragGestureActive else { return }
-        let activationLocation = spaceDragActivationLocation ?? currentLocation
-        spaceDragActivationLocation = activationLocation
-        spaceDragGestureHandler.handleDragGesture(
-            from: activationLocation,
-            to: currentLocation
-        )
-    }
-
-    func tryUpdateSpaceDragState(
-        for gesture: Keyboard.Gesture,
-        on action: KeyboardAction
-    ) {
-        guard action == .space else { return }
-        switch gesture {
-        case .press:
-            setSpaceDragActive(false)
-            spaceDragActivationLocation = nil
-        case .longPress:
-            setSpaceDragActive(true)
-        case .release, .end:
-            setSpaceDragActive(false)
-        default: break
-        }
     }
 
     func setSpaceDragActive(_ isActive: Bool) {

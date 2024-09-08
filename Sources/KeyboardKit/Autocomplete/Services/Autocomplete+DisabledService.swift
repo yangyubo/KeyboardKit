@@ -49,6 +49,9 @@ public extension Autocomplete {
         open func learnWord(_ word: String) {}
         open func removeIgnoredWord(_ word: String) {}
         open func unlearnWord(_ word: String) {}
+
+        open func disableAutocorrectForCurrentWord() {}
+        open func enableAutocorrectForCurrentWord() {}
     }
 }
 

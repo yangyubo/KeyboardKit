@@ -64,6 +64,10 @@ This version also adds a `KeyboardThemeContext` that can persist the current the
 * `Gestures.GestureButton` and `Gestures.ScrollViewGestureButton` have been deprecated.
 * `KeyboardStyleProvider` and its related types are renamed to `KeyboardStyleService`.
 
+### 💥 Breaking changes 
+
+* `AutocompleteService` has two new functions that must be implemented.
+
 
 
 ## 8.8.4

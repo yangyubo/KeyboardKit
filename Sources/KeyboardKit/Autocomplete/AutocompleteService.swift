@@ -81,6 +81,13 @@ public protocol AutocompleteService: AnyObject {
 
     /// Make the service unlearn a certain word.
     func unlearnWord(_ word: String)
+
+
+    /// Disable autocorrect for the current word.
+    func disableAutocorrectForCurrentWord()
+
+    /// Enable autocorrect for the current word.
+    func enableAutocorrectForCurrentWord()
 }
 
 public extension AutocompleteService {
