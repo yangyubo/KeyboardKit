@@ -32,7 +32,7 @@ public struct KeyboardViewItem<Content: View>: View {
     ///   - inputWidth: The input width within the keyboard.
     ///   - isNextProbability: The probability (0-1) that the button will be tapped next.
     ///   - content: The content view to use within the item.
-    init(
+    public init(
         item: KeyboardLayout.Item,
         actionHandler: KeyboardActionHandler,
         repeatTimer: GestureButtonTimer? = nil,
