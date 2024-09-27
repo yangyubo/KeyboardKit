@@ -133,21 +133,27 @@ public extension CalloutContext.ActionContext {
     }
     
     /// Update the selected action for a drag gesture.
-    func updateSelection(with dragTranslation: CGSize?) {
-        guard let value = dragTranslation, buttonFrame != .zero else { return }
+    func updateSelection(with dragValue: DragGesture.Value) {
+        guard buttonFrame != .zero else { return }
+        let value = dragValue.translation
         if shouldReset(for: value) { return reset() }
         guard shouldUpdateSelection(for: value) else { return }
-        let translation = value.width
+        let translation = dragValue.startLocation.x + value.width
+        
         let standardStyle = Callouts.ActionCalloutStyle.standard
         let maxButtonSize = standardStyle.maxButtonSize
         let buttonSize = buttonFrame.size.limited(to: maxButtonSize)
-        let indexWidth = 0.9 * buttonSize.width
-        let offset = Int(abs(translation) / indexWidth)
+        let indexWidth = buttonSize.width
+        // For trailing callout, calculate from maxX of button frame
+        let relativeOffset = translation >= 0 ? translation : abs(translation) + indexWidth
+        let offset = Int(relativeOffset / indexWidth)
         let index = isLeading ? offset : actions.count - offset - 1
         let currentIndex = self.selectedIndex
         let newIndex = isIndexValid(index) ? index : startIndex
-        if currentIndex != newIndex { triggerHapticFeedbackForSelectionChange() }
-        self.selectedIndex = newIndex
+        if currentIndex != newIndex {
+            triggerHapticFeedbackForSelectionChange()
+            self.selectedIndex = newIndex
+        }
     }
 }
 
