@@ -45,6 +45,15 @@ public enum KeyboardAction: Codable, Equatable {
     
     /// Represents a control (⌃) key.
     case control
+    
+    /// Represents a control (⌃) key combination.
+    case controlCombination(asciiKey: UInt8)
+    
+    /// Represents a meta (❖) key combination.
+    case metaCombination(asciiKey: UInt8)
+    
+    /// Represents a F1~F12 key.
+    case functionKey(UInt8)
 
     /// A custom action that you can handle in any custom way.
     case custom(named: String)
@@ -223,6 +232,9 @@ public extension KeyboardAction {
         case .capsLock: true
         case .command: true
         case .control: true
+        case .controlCombination: true
+        case .metaCombination: true
+        case .functionKey: true
         case .dictation: true
         case .dismissKeyboard: true
         case .escape: true
@@ -273,6 +285,9 @@ public extension KeyboardAction {
         case .characterMargin: nil
         case .command: "Command"
         case .control: "Control"
+        case .controlCombination(let asciiValue): "Control - \(UnicodeScalar(asciiValue))"
+        case .metaCombination(let asciiValue): "Meta - \(UnicodeScalar(asciiValue))"
+        case .functionKey(let number): "F\(number)"
         case .custom(let name): name
         case .diacritic(let val): val.char
         case .dictation: "Dictation"

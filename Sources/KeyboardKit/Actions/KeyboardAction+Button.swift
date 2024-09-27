@@ -29,6 +29,9 @@ public extension KeyboardAction {
         case .character(let char): standardButtonText(for: char)
         case .diacritic(let dia): dia.char
         case .emoji(let emoji): emoji.char
+        case .controlCombination(let asciiValue): String(UnicodeScalar(asciiValue)).uppercased()
+        case .metaCombination(let asciiValue): String(UnicodeScalar(asciiValue)).uppercased()
+        case .functionKey(let number): "F\(number)"
         case .keyboardType(let type): type.standardButtonText(for: context)
         case .nextLocale: context.locale.languageCode?.uppercased()
         case .primary(let type): type.standardButtonText(for: context.locale)

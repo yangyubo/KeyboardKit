@@ -157,6 +157,8 @@ private extension Callouts.ActionCallout {
         switch action {
         case .character(let char): calloutView(for: char)
         case .emoji(let emoji): calloutView(for: emoji)
+        case .controlCombination(let asciiValue): calloutView(for: action.inputCalloutText ?? "")
+        case .metaCombination(let asciiValue): calloutView(for: action.inputCalloutText ?? "")
         default: EmptyView()
         }
     }
