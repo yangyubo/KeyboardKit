@@ -322,6 +322,9 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     open func openUrl(_ url: URL?) {
         openUrlDefault(url)
     }
+    
+    open func controlCombination(with scalar: UnicodeScalar) {}
+    open func metaCombination(with scalar: UnicodeScalar) {}
 
 
     // MARK: - Syncing

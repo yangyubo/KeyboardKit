@@ -50,4 +50,9 @@ public protocol KeyboardController: AnyObject {
 
     /// Open a certain URL
     func openUrl(_ url: URL?)
+    
+    func controlCombination(with scalar: UnicodeScalar)
+    
+    func metaCombination(with scalar: UnicodeScalar)
+    
 }

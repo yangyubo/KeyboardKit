@@ -82,6 +82,8 @@ public extension KeyboardAction {
         case .tab: { $0?.insertText(.tab) }
         case .text(let text): { $0?.insertText(text) }
         case .url(let url, _): { $0?.openUrl(url) }
+        case .controlCombination(asciiKey: let asciiValue): { $0?.controlCombination(with: UnicodeScalar(asciiValue)) }
+        case .metaCombination(asciiKey: let asciiValue): {  $0?.metaCombination(with: UnicodeScalar(asciiValue)) }
         default: nil
         }
     }
