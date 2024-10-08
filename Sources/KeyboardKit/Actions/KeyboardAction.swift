@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// This enum defines keyboard-specific actions, and is also
 /// a namespace for keyboard action-related types.
@@ -52,8 +53,8 @@ public enum KeyboardAction: Codable, Equatable {
     /// Represents a meta (❖) key combination.
     case metaCombination(asciiKey: UInt8)
     
-    /// Represents a F1~F12 key.
-    case functionKey(UInt8)
+    /// Represents arbitrary key
+    case customKey(keyCode: UIKeyboardHIDUsage, isSystemAction: Bool, label: String, imageName: String? = nil)
 
     /// A custom action that you can handle in any custom way.
     case custom(named: String)
@@ -127,6 +128,8 @@ public enum KeyboardAction: Codable, Equatable {
     /// Open an url when released, using a custom id for identification.
     case url(_ url: URL?, id: String? = nil)
 }
+
+extension UIKeyboardHIDUsage: Codable {}
 
 public extension KeyboardAction {
     
@@ -234,7 +237,7 @@ public extension KeyboardAction {
         case .control: true
         case .controlCombination: true
         case .metaCombination: true
-        case .functionKey: true
+        case .customKey(_, let isSystemAction, _, _): isSystemAction
         case .dictation: true
         case .dismissKeyboard: true
         case .escape: true
@@ -287,7 +290,7 @@ public extension KeyboardAction {
         case .control: "Control"
         case .controlCombination(let asciiValue): "Control - \(UnicodeScalar(asciiValue))"
         case .metaCombination(let asciiValue): "Meta - \(UnicodeScalar(asciiValue))"
-        case .functionKey(let number): "F\(number)"
+        case .customKey(_, _, let label, _): label
         case .custom(let name): name
         case .diacritic(let val): val.char
         case .dictation: "Dictation"

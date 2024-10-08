@@ -31,7 +31,7 @@ public extension KeyboardAction {
         case .emoji(let emoji): emoji.char
         case .controlCombination(let asciiValue): String(UnicodeScalar(asciiValue)).uppercased()
         case .metaCombination(let asciiValue): String(UnicodeScalar(asciiValue)).uppercased()
-        case .functionKey(let number): "F\(number)"
+        case .customKey(_, _, let label, _): label
         case .keyboardType(let type): type.standardButtonText(for: context)
         case .nextLocale: context.locale.languageCode?.uppercased()
         case .primary(let type): type.standardButtonText(for: context.locale)
@@ -60,6 +60,7 @@ private extension KeyboardAction {
         case .moveCursorForward: .keyboardArrowRight
         case .nextKeyboard: .keyboardGlobe
         case .option: .keyboardOption
+        case .customKey(_, _, _, let imageName): imageName != nil ? Image(systemName: imageName!) : nil
         case .primary(let type): type.standardButtonImage(for: context.locale)
         case .settings: .keyboardSettings
         case .shift(let currentCasing): .keyboardShift(currentCasing)

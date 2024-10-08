@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// This protocol can be implemented by any classes that can
 /// be used to control a keyboard extension.
@@ -54,5 +55,7 @@ public protocol KeyboardController: AnyObject {
     func controlCombination(with scalar: UnicodeScalar)
     
     func metaCombination(with scalar: UnicodeScalar)
+    
+    func customKey(with keyCode: UIKeyboardHIDUsage, isSystemAction: Bool, label: String)
     
 }

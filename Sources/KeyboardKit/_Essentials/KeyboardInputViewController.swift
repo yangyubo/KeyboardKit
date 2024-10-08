@@ -325,6 +325,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     
     open func controlCombination(with scalar: UnicodeScalar) {}
     open func metaCombination(with scalar: UnicodeScalar) {}
+    open func customKey(with keyCode: UIKeyboardHIDUsage, isSystemAction: Bool, label: String) {}
 
 
     // MARK: - Syncing

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// This extension defines standard gestures for the various
 /// keyboard actions.
@@ -84,6 +85,7 @@ public extension KeyboardAction {
         case .url(let url, _): { $0?.openUrl(url) }
         case .controlCombination(asciiKey: let asciiValue): { $0?.controlCombination(with: UnicodeScalar(asciiValue)) }
         case .metaCombination(asciiKey: let asciiValue): {  $0?.metaCombination(with: UnicodeScalar(asciiValue)) }
+        case .customKey(let keyCode, let isSystemAction, let label, _): { $0?.customKey(with: keyCode, isSystemAction: isSystemAction, label: label) }
         default: nil
         }
     }
