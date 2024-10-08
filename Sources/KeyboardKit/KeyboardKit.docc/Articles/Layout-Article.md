@@ -28,9 +28,10 @@ KeyboardKit has a ``KeyboardLayoutService`` protocol that is implemented by clas
 KeyboardKit has a ``KeyboardLayout`` type that is also a namespace for other layout-related types like ``KeyboardLayout/Configuration``, ``KeyboardLayout/Item``, etc.
 
 
+
 ## Input Sets
 
-An ``InputSet`` set specifies the input keys of a keyboard. It makes it easy to define different input keys for the same keyboard layout.
+An ``InputSet`` specifies the input keys of a keyboard. It makes it easy to define different input keys for the same keyboard layout.
 
 KeyboardKit comes with some pre-defined input sets, like ``InputSet/qwerty``, ``InputSet/numeric(currency:)`` and ``InputSet/symbolic(currencies:)``. KeyboardKit Pro unlocks more input sets, e.g. QWERTZ, AZERTY, and specific input sets for each locale.
 
@@ -38,7 +39,7 @@ KeyboardKit comes with some pre-defined input sets, like ``InputSet/qwerty``, ``
 
 ## Keyboard Layouts
 
-A ``KeyboardLayout`` specifies the full set of keys om a keyboard. Layouts vary greatly for different device types, screen orientations, locales, keyboard configurations, etc.
+A ``KeyboardLayout`` specifies the full set of keys on a keyboard. Layouts vary greatly for different device types, screen orientations, locales, keyboard configurations, etc.
 
 For instance, *most* iOS keyboards have 3 input rows, with input keys that are surrounded by action keys, as well as a bottom row with a space bar and contextual action keys. This is however not true for all locales, where the layout can vary greatly.
 
@@ -46,14 +47,19 @@ For instance, *most* iOS keyboards have 3 input rows, with input keys that are s
 
 ## Keyboard Layout Services
 
-Given all this, the layout engine has to be flexible. KeyboardKit has a ``KeyboardLayoutService`` that generates layouts at runtime, based on many different factors. Layout services can use any information to tweak any part of a layout at any time.
+In KeyboardKit, a ``KeyboardLayoutService`` can generate layouts at runtime, based on different factors.
 
-KeyboardKit automatically creates an instance of ``KeyboardLayout/StandardService`` and injects it into ``KeyboardInputViewController/services``. You can replace it at any time, as described further down, or inject custom services into it.
+KeyboardKit automatically creates an instance of ``KeyboardLayout/StandardService`` and injects it into ``KeyboardInputViewController/services``. You can replace it at any time, as described further down, or inject custom services into it with ``KeyboardLayoutService/tryRegisterLocalizedService(_:)``.
 
-You can easily resolve various ``KeyboardLayoutService`` implementations with these shorthands, sorted by relevance:
+
+
+## Keyboard Layout Service Shorthands
+
+You can easily resolve various service types with these shorthands:
 
 * ``KeyboardLayoutService/standard(baseService:localizedServices:)``
-* ``KeyboardLayoutService/localized(for:)`` (👑 KeyboardKit Pro)
+* ``KeyboardLayoutService/localized(_:)``, e.g. `.localized(.German(...))` (👑 Pro)
+* ``KeyboardLayoutService/localized(for:)``, e.g. `.localized(for: .swedish)` (👑 Pro)
 * ``KeyboardLayoutService/disabled``
 * ``KeyboardLayoutService/preview``
 

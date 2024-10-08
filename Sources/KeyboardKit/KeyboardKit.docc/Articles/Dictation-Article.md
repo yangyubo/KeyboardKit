@@ -18,7 +18,7 @@ KeyboardKit has a ``Dictation`` namespace that contains dictation-related types 
 
 ## Dictation Context
 
-KeyboardKit has an observable ``DictationContext`` that provides observable autocomplete state, such as the ``DictationContext/dictatedText``. The state properties are modified as dictation is performed by the keyboard and the main app.
+KeyboardKit has an observable ``DictationContext`` that provides observable dictation state, such as the ``DictationContext/dictatedText``. The state properties are modified as dictation is performed by the keyboard and the main app.
 
 The context also has persistent, observable settings, such as  ``DictationContext/silenceLimit``, etc. You can read more about how settings are handled in the <doc:Essentials-Article> and <doc:Settings-Article> articles.
 
@@ -32,7 +32,11 @@ In KeyboardKit, a ``DictationService`` can perform dictation where microphone ac
 
 KeyboardKit doesn't have standard dictation services. Instead, it injects a disabled keyboard service into ``KeyboardInputViewController/services`` until you register [KeyboardKit Pro][pro] or inject your own service implementation.
 
-You can easily resolve various ``KeyboardDictationService`` implementations with these shorthands, sorted by relevance:
+
+
+## Dictation Service Shorthands
+
+You can easily resolve various service types with these shorthands:
 
 * ``KeyboardDictationService/proInApp(dictationContext:openUrl:speechRecognizer:)`` (👑 KeyboardKit Pro)
 * ``KeyboardDictationService/proInKeyboard(keyboardContext:dictationContext:actionHandler:)`` (👑 KeyboardKit Pro)
