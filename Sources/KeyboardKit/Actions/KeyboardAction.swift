@@ -53,8 +53,8 @@ public enum KeyboardAction: Codable, Equatable {
     /// Represents a meta (❖) key combination.
     case metaCombination(asciiKey: UInt8)
     
-    /// Represents arbitrary key
-    case customKey(keyCode: UIKeyboardHIDUsage, isSystemAction: Bool, label: String, imageName: String? = nil)
+    /// Represents arbitrary key, label will be used as callout text if both label and imageName are set
+    case customKey(keyCode: UIKeyboardHIDUsage, isSystemAction: Bool, label: String? = nil, imageName: String? = nil)
 
     /// A custom action that you can handle in any custom way.
     case custom(named: String)

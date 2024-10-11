@@ -56,6 +56,6 @@ public protocol KeyboardController: AnyObject {
     
     func metaCombination(with scalar: UnicodeScalar)
     
-    func customKey(with keyCode: UIKeyboardHIDUsage, isSystemAction: Bool, label: String)
+    func customKey(with keyCode: UIKeyboardHIDUsage, isSystemAction: Bool, label: String?)
     
 }

@@ -17,6 +17,7 @@ public extension KeyboardAction {
         case .emoji(let emoji): emoji.char
         case .controlCombination(let asciiValue): "⌃\(UnicodeScalar(asciiValue))".uppercased()
         case .metaCombination(let asciiValue): "❖\(UnicodeScalar(asciiValue))".uppercased()
+        case .customKey(_, _, let label, let imageName): if imageName == nil { nil } else { label }
         default: nil
         }
     }
