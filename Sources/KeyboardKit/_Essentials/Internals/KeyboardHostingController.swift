@@ -16,7 +16,6 @@ class KeyboardHostingController<Content: View>: UIHostingController<Content> {
     /// Add this hosting controller to a keyboard input view
     /// controller, with every required resizing constraints.
     public func add(to controller: KeyboardInputViewController) {
-        willMove(toParent: controller)
         controller.addChild(self)
         controller.view.addSubview(view)
         view.backgroundColor = .clear
