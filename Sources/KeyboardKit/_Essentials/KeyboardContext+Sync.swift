@@ -129,11 +129,34 @@ extension KeyboardContext {
     }
 }
 
+extension UIWindow {
+    
+    static var current: UIWindow? {
+        for scene in UIApplication.shared.connectedScenes {
+            guard let windowScene = scene as? UIWindowScene else { continue }
+            for window in windowScene.windows {
+                if window.isKeyWindow { return window }
+            }
+        }
+        return nil
+    }
+    
+}
+
+
+extension UIScreen {
+    
+    static var current: UIScreen? {
+        UIWindow.current?.screen
+    }
+    
+}
+
 private extension UIInputViewController {
 
     var orientation: InterfaceOrientation {
         #if os(iOS) || os(tvOS)
-        view.window?.screen.interfaceOrientation ?? .portrait
+        UIScreen.current?.interfaceOrientation ?? .portrait
         #else
         .portrait
         #endif
@@ -141,7 +164,7 @@ private extension UIInputViewController {
 
     var screenSize: CGSize {
         #if os(iOS) || os(tvOS)
-        view.window?.screen.bounds.size ?? .zero
+        UIScreen.current?.bounds.size ?? .zero
         #else
         .zero
         #endif

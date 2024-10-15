@@ -16,15 +16,16 @@ class KeyboardHostingController<Content: View>: UIHostingController<Content> {
     /// Add this hosting controller to a keyboard input view
     /// controller, with every required resizing constraints.
     public func add(to controller: KeyboardInputViewController) {
+        willMove(toParent: controller)
         controller.addChild(self)
         controller.view.addSubview(view)
-        didMove(toParent: controller)
         view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
         view.leadingAnchor.constraint(equalTo: controller.view.leadingAnchor).isActive = true
         view.trailingAnchor.constraint(equalTo: controller.view.trailingAnchor).isActive = true
         view.topAnchor.constraint(equalTo: controller.view.topAnchor).isActive = true
         view.bottomAnchor.constraint(equalTo: controller.view.bottomAnchor).isActive = true
+        didMove(toParent: controller)
     }
 
     deinit {
