@@ -135,15 +135,14 @@ public extension CalloutContext.ActionContext {
     }
 
     /// Update the selected action for a drag gesture.
-    func updateSelection(with dragValue: DragGesture.Value) {
+    func updateSelection(with dragValue: DragGesture.Value, style: Callouts.ActionCalloutStyle) {
         guard buttonFrame != .zero else { return }
         let value = dragValue.translation
         if shouldReset(for: value) { return reset() }
         guard shouldUpdateSelection(for: value) else { return }
         let translation = dragValue.startLocation.x + value.width
         
-        let standardStyle = Callouts.ActionCalloutStyle.standard
-        let maxButtonSize = standardStyle.maxButtonSize
+        let maxButtonSize = style.maxButtonSize
         let buttonSize = buttonFrame.size.limited(to: maxButtonSize)
         let indexWidth = buttonSize.width
         // For trailing callout, calculate from maxX of button frame

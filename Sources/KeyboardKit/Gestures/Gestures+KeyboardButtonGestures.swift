@@ -13,6 +13,9 @@ extension Gestures {
 
     /// This view applies keyboard gestures to any view.
     struct KeyboardButtonGestures<Content: View>: View {
+        
+        @Environment(\.actionCalloutStyle)
+        private var actionCalloutStyle
 
         /// Apply a set of action gestures to a view.
         ///
@@ -136,7 +139,7 @@ private extension Gestures.KeyboardButtonGestures {
 
     func handleDrag(in geo: GeometryProxy, value: DragGesture.Value) {
         lastDragValue = value
-        calloutContext?.actionContext.updateSelection(with: value)
+        calloutContext?.actionContext.updateSelection(with: value, style: actionCalloutStyle)
         dragAction?(value.startLocation, value.location)
     }
 
