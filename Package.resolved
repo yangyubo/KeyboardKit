@@ -1,5 +1,4 @@
 {
-  "originHash" : "62ccb62fd838df846cdb6c8869e014525c4f9c091e8b3f4000ad0e2427ff04a1",
   "pins" : [
     {
       "identity" : "mockingkit",
@@ -11,5 +10,5 @@
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }

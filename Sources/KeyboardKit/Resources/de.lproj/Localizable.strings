@@ -8,7 +8,7 @@
 
 "locale" = "de";
 
-"capsLock" = "";
+"capsLock" = "caps lock";
 "continue" = "continue";
 "done" = "Fertig";
 "emergencyCall" = "Emergency Call";
@@ -25,5 +25,15 @@
 "switcherAlphabetic" = "ABC";
 "switcherNumeric" = "123";
 "switcherSymbolic" = "#+=";
+
+"EmojiCategory.frequent" = "Oft benutzt";
+"EmojiCategory.smileysAndPeople" = "Smileys & Personen";
+"EmojiCategory.animalsAndNature" = "Tiere & Natur";
+"EmojiCategory.foodAndDrink" = "Essen & Trinken";
+"EmojiCategory.activity" = "Aktivität";
+"EmojiCategory.travelAndPlaces" = "Reisen & Orte";
+"EmojiCategory.objects" = "Objekte";
+"EmojiCategory.symbols" = "Symbole";
+"EmojiCategory.flags" = "Flaggen";
 
 // For emoji localization, copy & translate the English list.

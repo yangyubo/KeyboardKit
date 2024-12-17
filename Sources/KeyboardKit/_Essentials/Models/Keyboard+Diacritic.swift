@@ -9,12 +9,19 @@
 import Foundation
 
 public extension Keyboard {
-    
+
+    /// This is a typealias for the ``Diacritic`` type.
+    ///
+    /// > Note: This typealias is only meant to make it easy
+    /// to find the ``Diacritic`` type for those who doesn't
+    /// know the proper terminology.
+    typealias Accent = Diacritic
+
     /// This type can define character diacritic variants.
     ///
-    /// The ``KeyboardAction/StandardHandler`` will handle a
-    /// ``KeyboardAction/diacritic(_:)`` action by replacing
-    /// the last character that any diacritic match.
+    /// The ``KeyboardAction/StandardActionHandler`` handles
+    /// diacritics by replacing the last typed character, if
+    /// matches the diacritic.
     struct Diacritic: Codable, Equatable {
         
         /// Create a custom diacritic value.

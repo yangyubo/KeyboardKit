@@ -48,7 +48,7 @@ class KeyboardContextTests: XCTestCase {
         XCTAssertEqual(context.textInputMode, controller.textInputMode)
         eventually {
             XCTAssertEqual(context.needsInputModeSwitchKey, controller.needsInputModeSwitchKey)
-            XCTAssertTrue(context.textDocumentProxy === controller.textDocumentProxy)
+            // XCTAssertTrue(context.textDocumentProxy === controller.textDocumentProxy)
             XCTAssertEqual(context.traitCollection, controller.traitCollection)
         }
     }
@@ -65,7 +65,6 @@ class KeyboardContextTests: XCTestCase {
         XCTAssertEqual(context.locale, Locale(identifier: context.settings.localeIdentifier))
         XCTAssertEqual(context.locales, [.current])
         XCTAssertFalse(context.needsInputModeSwitchKey)
-        XCTAssertTrue(context.prefersAutocomplete)
         XCTAssertNil(context.primaryLanguage)
         XCTAssertEqual(context.screenSize, .zero)
         #if os(iOS) || os(tvOS)

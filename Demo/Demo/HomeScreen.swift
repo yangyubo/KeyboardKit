@@ -11,58 +11,58 @@ import SwiftUI
 
 /// This is the main demo app screen.
 ///
-/// This view uses a KeyboardKit Pro `KeyboardApp.HomeScreen`
-/// to present keyboard-specific statuses and settings links,
-/// with some demo-specific modifications.
+/// This view uses a KeyboardKit Pro `HomeScreen` to present
+/// keyboard status and settings links with some adjustments.
 ///
-/// See ``DemoApp`` for important, demo-specific information.
+/// See ``DemoApp`` for important, demo-specific information
+/// on why the in-app keyboard settings aren't synced to the
+/// keyboards by default, and how you can enable this.
 struct HomeScreen: View {
 
-    @State
-    private var text = ""
+    let app = KeyboardApp.keyboardKitDemo
 
-    @State
-    private var textEmail = ""
+    @State var text = ""
+    @State var textEmail = ""
+    @State var textURL = ""
+    @State var textWebSearch = ""
 
-    @State
-    private var textURL = ""
+    @Environment(\.openURL) var openURL
 
-    @State
-    private var textWebSearch = ""
-
-    @Environment(\.openURL)
-    private var openURL
-
-    @EnvironmentObject
-    private var dictationContext: DictationContext
-
-    @EnvironmentObject
-    private var keyboardContext: KeyboardContext
+    @EnvironmentObject var dictationContext: DictationContext
+    @EnvironmentObject var keyboardContext: KeyboardContext
+    @EnvironmentObject var themeContext: KeyboardThemeContext
 
     var body: some View {
         NavigationView {
             KeyboardApp.HomeScreen(
-                app: .demoApp,
+                app: app,
                 appIcon: Image(.icon),
                 header: {},
-                footer: textFieldSection
+                footer: {
+                    Section("Section.TextFields") {
+                        TextField("TextField.Plain", text: $text)
+                            .keyboardType(.default)
+                        TextField("TextField.Email", text: $textEmail)
+                            .keyboardType(.emailAddress)
+                        TextField("TextField.URL", text: $textURL)
+                            .keyboardType(.URL)
+                        TextField("TextField.WebSearch", text: $textWebSearch)
+                            .keyboardType(.webSearch)
+                    }
+                }
             )
-            .navigationTitle("KeyboardKit")
+            .navigationTitle(app.name)
         }
-        .keyboardAppHomeScreenLocalization(
-            .init(
-                keyboardSectionFooter: "OBS! This demo app doesn't sync any settings between the app and the keyboard!"
-            )
-        )
-        .keyboardAppHomeScreenStyle(
-            .init(appIconSize: 150)
-        )
-        .keyboardAppHomeScreenVisibility(
-            .init(
-                keyboardSection: true,
-                keyboardSectionThemeSettings: true
-            )
-        )
+        .keyboardAppHomeScreenLocalization(.init(
+            keyboardSectionFooter: "OBS! This demo isn't code signed and therefore can't sync settings to its keyboard extensions!"
+        ))
+        .keyboardAppHomeScreenStyle(.init(
+            appIconSize: 120
+        ))
+        .keyboardAppHomeScreenVisibility(.init(
+            keyboardSection: true,
+            keyboardSectionThemeSettings: true
+        ))
         .keyboardDictation(
             dictationContext: dictationContext,
             keyboardContext: keyboardContext,
@@ -78,32 +78,14 @@ extension HomeScreen {
     
     func dictationScreen() -> some View {
         Dictation.Screen(
-            dictationContext: dictationContext
-        ) {
-            EmptyView()
-        } visualizer: {
-            Dictation.BarVisualizer(isAnimating: $0)
-        } doneButton: { action in
-            Button("Done", action: action)
-                .buttonStyle(.borderedProminent)
-        }
-    }
-    
-    var footerText: some View {
-        Text("You must enable the keyboard in System Settings, then select it with 🌐 when typing.")
-    }
-    
-    func textFieldSection() -> some View {
-        Section("Text Fields") {
-            TextField("Plain Text...", text: $text)
-                .keyboardType(.default)
-            TextField("Email...", text: $textEmail)
-                .keyboardType(.emailAddress)
-            TextField("URL...", text: $textURL)
-                .keyboardType(.URL)
-            TextField("Web Search...", text: $textWebSearch)
-                .keyboardType(.webSearch)
-        }
+            dictationContext: dictationContext,
+            titleView: { EmptyView() },
+            visualizer: { Dictation.BarVisualizer(isAnimating: $0) },
+            doneButton: { action in
+                Button("Button.Done", action: action)
+                    .buttonStyle(.borderedProminent)
+            }
+        )
     }
 }
 

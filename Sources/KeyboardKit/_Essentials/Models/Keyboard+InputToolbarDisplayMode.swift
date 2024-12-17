@@ -17,31 +17,27 @@ public extension Keyboard {
     /// ``SwiftUICore/View/keyboardInputToolbarDisplayMode(_:)``.
     enum InputToolbarDisplayMode: Equatable {
 
-        /// This mode renders an input toolbar when it makes
-        /// sense given the current device and configuration.
+        /// Display an input toolbar when it makes sense.
         case automatic
 
-        /// This mode can be used to display a set of inputs.
+        /// Display a toolbar with a fix set of characters.
         case inputs(_ inputs: String)
-        
-        /// This mode can be used to hide the input toolbar.
+
+        /// Display a toolbar with contextual numeric inputs.
+        case numbers
+
+        /// Hide the input toolbar.
         case hidden
     }
-}
-
-public extension Keyboard.InputToolbarDisplayMode {
-    
-    /// This mode can be used to display 1-0 as inputs.
-    static let numbers = Self.inputs("1234567890")
 }
 
 public extension View {
 
     /// Apply an ``Keyboard/InputToolbarDisplayMode``.
     func keyboardInputToolbarDisplayMode(
-        _ style: Keyboard.InputToolbarDisplayMode
+        _ mode: Keyboard.InputToolbarDisplayMode
     ) -> some View {
-        self.environment(\.keyboardInputToolbarDisplayMode, style)
+        self.environment(\.keyboardInputToolbarDisplayMode, mode)
     }
 }
 

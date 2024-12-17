@@ -15,8 +15,8 @@ import Foundation
 ///
 /// - ``AutocompleteContext``.``AutocompleteContext/preview``
 /// - ``AutocompleteService``.``AutocompleteService/preview``
-/// - ``CalloutContext``.``CalloutContext/preview``
-/// - ``CalloutService``.``CalloutService/preview``
+/// - ``KeyboardCalloutContext``.``KeyboardCalloutContext/preview``
+/// - ``KeyboardCalloutService``.``KeyboardCalloutService/preview``
 /// - ``KeyboardActionHandler``.``KeyboardActionHandler/preview``
 /// - ``KeyboardContext``.``KeyboardContext/preview``
 /// - ``KeyboardInputViewController``.``KeyboardInputViewController/preview``
@@ -28,5 +28,5 @@ import Foundation
 /// These previews make it easier to use SwiftUI previews in
 /// a KeyboardKit-based app.
 ///
-/// See the <doc:Previews-Article> article for more information.
+/// See <doc:Previews-Article> for more information.
 public struct KeyboardPreviews {}

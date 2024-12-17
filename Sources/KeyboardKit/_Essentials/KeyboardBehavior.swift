@@ -11,15 +11,12 @@ import Foundation
 /// This protocol can be implemented by any classes that can
 /// define keyboard-specific behaviors.
 ///
-/// Some types, like ``KeyboardAction/StandardHandler`` will
-/// use this protocol to make decisions.
-///
 /// KeyboardKit will automatically setup a standard protocol
 /// implementation in ``KeyboardInputViewController/services``
 /// when the keyboard is launched. You can change or replace
 /// it at any time to customize the keyboard behavior.
 ///
-/// See the <doc:Essentials-Article> for more information.
+/// See <doc:Essentials-Article> for more information.
 public protocol KeyboardBehavior {
     
     /// The range that backspace should delete.

@@ -38,20 +38,40 @@ public struct License {}
 public extension Keyboard {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    struct ToggleToolbar {}
+    struct BottomRow: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    struct ToggleToolbar: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
 }
 
-#if os(iOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
 public extension KeyboardInputViewController {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
     typealias LicenseRegistrationResult = Result<License, Error>
 
     /// 👑 This is unlocked by KeyboardKit Pro.
+    enum LicenseValidationErrorDisplay: Equatable {
+        case debug, always
+    }
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
     func setupPro(
         for app: KeyboardApp,
+        errorDisplay: LicenseValidationErrorDisplay = .debug,
         completion: @escaping (LicenseRegistrationResult) -> Void
     ) {}
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    var hostApplicationBundleId: String? { nil }
 }
 #endif
 
@@ -61,10 +81,20 @@ public extension KeyboardInputViewController {
 public extension Autocomplete {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    class LocalService: Autocomplete.DisabledService {}
+    class LocalAutocompleteService: Autocomplete.DisabledAutocompleteService {
+
+        /// 👑 This is unlocked by KeyboardKit Pro.
+        public var nextWordPredictionRequest: Autocomplete.NextWordPredictionRequest?
+    }
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    class RemoteService: Autocomplete.DisabledService {}
+    class RemoteAutocompleteService: Autocomplete.DisabledAutocompleteService {}
+}
+
+public extension Autocomplete.Settings {
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    var nextWordPredictionRequest: Autocomplete.NextWordPredictionRequest? { nil }
 }
 
 public extension Autocomplete.NextWordPredictionRequest {
@@ -72,24 +102,45 @@ public extension Autocomplete.NextWordPredictionRequest {
     /// 👑 This is unlocked by KeyboardKit Pro.
     static func claude(
         apiKey: String,
-        apiVersion: String = "2023-06-01",
-        apiUrl: String = "https://api.anthropic.com/v1/messages",
-        model: String = "claude-3-5-sonnet-20240620",
-        maxTokens: Int = 15,
-        system: String = "You are a next word predictor. ONLY return the 3 most probable next words as CSV."
-    ) throws -> Self {
-        throw ProPlaceholderError.proPlaceholder
+        apiUrl: String = "",
+        anthropicVersion: String = "",
+        model: String = "",
+        maxTokens: Int = 0,
+        systemPrompt: String? = nil
+    ) -> Self {
+        .init(type: .claude) { _ in
+            throw ProPlaceholderError.proPlaceholder
+        } predictionParser: { _ in
+            throw ProPlaceholderError.proPlaceholder
+        }
+    }
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    static func openAI(
+        apiKey: String,
+        apiUrl: String = "",
+        apiKeyHeader: String = "",
+        apiKeyValuePrefix: String = "",
+        model: String = "",
+        maxTokens: Int = 0,
+        systemPrompt: String? = nil
+    ) -> Self {
+        .init(type: .openAI) { _ in
+            throw ProPlaceholderError.proPlaceholder
+        } predictionParser: { _ in
+            throw ProPlaceholderError.proPlaceholder
+        }
     }
 }
 
-public extension AutocompleteService where Self == Autocomplete.LocalService {
+public extension AutocompleteService where Self == Autocomplete.LocalAutocompleteService {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
     static func local(
         context: AutocompleteContext,
         locale: Locale = .current
     ) throws -> Self {
-        Autocomplete.LocalService()
+        Autocomplete.LocalAutocompleteService()
     }
 }
 
@@ -99,38 +150,54 @@ public extension AutocompleteService where Self == Autocomplete.LocalService {
 public extension KeyboardApp {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    struct HomeScreen {}
+    struct HomeScreen: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    struct LocaleScreen {}
+    struct LocaleScreen: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    struct SettingsScreen {}
+    struct SettingsScreen: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    struct ThemeScreen {}
+    struct ThemeScreen: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
 }
 
 
-// MARK: - Callouts
+// MARK: - KeyboardCallout
 
-public extension Callouts {
-
-    /// 👑 This is unlocked by KeyboardKit Pro.
-    class ProService: Callouts.BaseService {}
-}
-
-public extension Callouts.ProService {
+public extension KeyboardCallout {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    class Swedish: Callouts.ProService {}
+    class ProCalloutService: KeyboardCallout.BaseCalloutService {}
 }
 
-public extension CalloutService where Self == Callouts.ProService {
+public extension KeyboardCallout.ProCalloutService {
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    class Swedish: KeyboardCallout.ProCalloutService {}
+}
+
+public extension KeyboardCalloutService where Self == KeyboardCallout.ProCalloutService {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
     static func localized(
-        _ service: @autoclosure () throws -> Callouts.ProService
+        _ service: @autoclosure () throws -> KeyboardCallout.ProCalloutService
     ) throws -> Self {
         throw ProPlaceholderError.proPlaceholder
     }
@@ -149,23 +216,31 @@ public extension CalloutService where Self == Callouts.ProService {
 public extension Dictation {
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    struct BarVisualizer {}
-    
+    struct BarVisualizer: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
+
     /// 👑 This is unlocked by KeyboardKit Pro.
     struct BarVisualizerStyle {}
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    struct Screen {}
-    
+    struct Screen: View {
+        public var body: some View {
+            ProPlaceholderError.proPlaceholder
+        }
+    }
+
     /// 👑 This is unlocked by KeyboardKit Pro.
     struct ScreenStyle {}
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    class StandardService: Dictation.DisabledService {}
+    class StandardDictationService: Dictation.DisabledDictationService {}
 }
 
 #if os(iOS)
-public extension DictationService where Self == Dictation.StandardService {
+public extension DictationService where Self == Dictation.StandardDictationService {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
     static func standardInApp(
@@ -208,7 +283,11 @@ public extension View {
 // MARK: - Emojis
 
 /// 👑 This is unlocked by KeyboardKit Pro.
-public struct EmojiKeyboard {}
+public struct EmojiKeyboard: View {
+    public var body: some View {
+        ProPlaceholderError.proPlaceholder
+    }
+}
 
 /// 👑 This is unlocked by KeyboardKit Pro.
 public extension Emoji.KeyboardStyle {
@@ -235,25 +314,14 @@ public extension Image {
 }
 
 
-// MARK: - External
-
-/// 👑 This is unlocked by KeyboardKit Pro.
-public class ExternalKeyboardContext: ObservableObject {}
-
-
-// MARK: - Feedback
-
-public extension Feedback {
-    
-    /// 👑 This is unlocked by KeyboardKit Pro.
-    struct Toggle {}
-}
-
-
 // MARK: - Host
 
 /// 👑 This is unlocked by KeyboardKit Pro.
-public enum KeyboardHostApplication {}
+public struct KeyboardHostApplication {
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    public func open(with handler: KeyboardActionHandler) {}
+}
 
 /// 👑 This is unlocked by KeyboardKit Pro.
 public protocol KeyboardHostApplicationProvider {
@@ -285,10 +353,10 @@ public extension InputSet {
 public extension KeyboardLayout {
 
     /// 👑 This is unlocked by KeyboardKit Pro
-    class ProService: KeyboardLayout.BaseService {}
+    class ProLayoutService: KeyboardLayout.BaseLayoutService {}
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    class iPadProService: iPadService {}
+    class iPadProLayoutService: iPadLayoutService {}
 
     /// 👑 This is unlocked by KeyboardKit Pro.
     func adjusted(
@@ -296,6 +364,13 @@ public extension KeyboardLayout {
         layoutConfiguration: KeyboardLayout.Configuration
     ) -> KeyboardLayout {
         return self
+    }
+
+    /// 👑 This is unlocked by KeyboardKit Pro.
+    var bottomRowLayout: KeyboardLayout {
+        var layout = self
+        layout.itemRows = layout.itemRows.suffix(1)
+        return layout
     }
 
     /// 👑 This is unlocked by KeyboardKit Pro.
@@ -323,17 +398,17 @@ public extension KeyboardLayout {
     }
 }
 
-public extension KeyboardLayout.ProService {
+public extension KeyboardLayout.ProLayoutService {
 
     /// 👑 This is unlocked by KeyboardKit Pro
-    class Swedish: KeyboardLayout.ProService {}
+    class Swedish: KeyboardLayout.ProLayoutService {}
 }
 
-public extension KeyboardLayoutService where Self == KeyboardLayout.ProService {
+public extension KeyboardLayoutService where Self == KeyboardLayout.ProLayoutService {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
     static func localized(
-        _ service: @autoclosure () throws -> KeyboardLayout.ProService
+        _ service: @autoclosure () throws -> KeyboardLayout.ProLayoutService
     ) throws -> Self {
         throw ProPlaceholderError.proPlaceholder
     }
@@ -411,17 +486,24 @@ public extension KeyboardStatus {
 public extension KeyboardStyle {
     
     /// 👑 This is unlocked by KeyboardKit Pro.
-    class ThemeBasedService: KeyboardStyle.StandardService {}
+    class ThemeBasedStyleService: KeyboardStyle.StandardStyleService {}
 }
 
-public extension KeyboardStyleService where Self == KeyboardStyle.ThemeBasedService {
+public extension KeyboardStyleService where Self == KeyboardStyle.ThemeBasedStyleService {
 
     /// 👑 This is unlocked by KeyboardKit Pro.
-    func themeBased(
+    static func themeBased(
         theme: @autoclosure () throws -> KeyboardTheme,
         keyboardContext: KeyboardContext
     ) throws -> Self {
-        .init(keyboardContext: keyboardContext)
+        throw ProPlaceholderError.proPlaceholder
+    }
+
+    static func themeBased(
+        keyboardContext: KeyboardContext,
+        themeContext: KeyboardThemeContext
+    ) throws -> Self {
+        throw ProPlaceholderError.proPlaceholder
     }
 }
 
@@ -441,6 +523,7 @@ public extension View {
         _ value: FocusState<Bool>.Binding,
         @ViewBuilder doneButton: @escaping () -> DoneButton
     ) -> some View { self }
+
     /// 👑 This is unlocked by KeyboardKit Pro.
     func keyboardStatusSectionStyle(
         _ style: KeyboardStatus.SectionStyle

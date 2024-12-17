@@ -21,11 +21,10 @@ import UIKit
 /// make state-based decisions, and automatically update the
 /// ``KeyboardView`` whenever the context changes.
 ///
-/// You can use ``locale`` to get and set the current locale
-/// or use ``Locale``-based properties and functions. If the
-/// ``locales`` or `` addedLocales`` properties have multiple
-/// values, ``selectNextLocale()`` will toggle through these,
-/// where ``addedLocales`` is used over ``locales``.
+/// You can use ``locale`` to get and set the current locale,
+/// which also affects the keyboard primary language. If the
+/// ``locales`` or ``settings`` added locales have more than
+/// one locale, ``selectNextLocale()`` toggles through these.
 ///
 /// This class also has observable auto-persisted ``settings``
 /// that can be used to configure the behavior and presented
@@ -45,6 +44,10 @@ public class KeyboardContext: ObservableObject {
 
 
     // MARK: - Settings
+
+    /// A ``Keyboard/Settings`` typealias.
+    public typealias Settings = Keyboard.Settings
+
 
     /// Keyboard-specific, auto-persisted settings.
     @Published
@@ -76,13 +79,18 @@ public class KeyboardContext: ObservableObject {
     @Published
     public var deviceTypeForKeyboard: DeviceType = .current
 
-    /// Whether or not the keyboard has a dictation key.
+    /// Whether the keyboard has a dictation key.
     @Published
     public var hasDictationKey: Bool = false
 
-    /// Whether or not the extension has full access.
+    /// Whether the extension has full access.
+    #if os(iOS) || os(tvOS) || os(visionOS)
+    @Published
+    public var hasFullAccess = UIInputViewController().hasFullAccess
+    #else
     @Published
     public var hasFullAccess: Bool = false
+    #endif
 
     /// The bundle ID of the keyboard host application.
     @Published
@@ -92,11 +100,15 @@ public class KeyboardContext: ObservableObject {
     @Published
     public var interfaceOrientation: InterfaceOrientation = .portrait
 
-    /// Whether or not the keyboard is in floating mode.
+    /// Whether the keyboard is collapsed.
+    @Published
+    public var isKeyboardCollapsed = false
+
+    /// Whether the keyboard is in floating mode.
     @Published
     public var isKeyboardFloating = false
 
-    /// Whether or not a space drag gesture is active.
+    /// Whether a space drag gesture is active.
     @Published
     public var isSpaceDragGestureActive = false
 
@@ -123,7 +135,7 @@ public class KeyboardContext: ObservableObject {
     @Published
     public var keyboardType = Keyboard.KeyboardType.alphabetic
 
-    /// The current locale.
+    /// The current locale, by default `.current`.
     ///
     /// > Note: Settings this will update ``localeIdentifier``
     /// and cause it to persist.
@@ -138,17 +150,11 @@ public class KeyboardContext: ObservableObject {
 
     /// The locale to use when displaying other locales.
     @Published
-    public var localePresentationLocale: Locale?
+    public var localePresentationLocale = Locale.current
 
-    /// Whether or not to add an input mode switch key.
+    /// Whether to add an input mode switch key.
     @Published
     public var needsInputModeSwitchKey = false
-
-    /// Whether or not the context prefers autocomplete.
-    ///
-    /// > Note: This will become a computed property in 9.0.
-    @Published
-    public var prefersAutocomplete = true
 
     /// The primary language that is currently being used.
     @Published
@@ -228,7 +234,7 @@ public extension KeyboardContext {
         #endif
     }
 
-    /// Whether or not to use a dark color scheme.
+    /// Whether to use a dark color scheme.
     var hasDarkColorScheme: Bool {
         #if os(iOS) || os(tvOS) || os(visionOS)
         colorScheme == .dark
@@ -237,9 +243,20 @@ public extension KeyboardContext {
         #endif
     }
 
-    /// Whether or not the context has multiple locales.
+    /// Whether the context has multiple locales.
     var hasMultipleLocales: Bool {
         locales.count > 1
+    }
+
+    /// Whether the context prefers autocomplete.
+    var prefersAutocomplete: Bool {
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        let proxy = textDocumentProxy.keyboardType?.prefersAutocomplete
+        let proxyPrefers = proxy ?? true
+        return keyboardType.prefersAutocomplete && proxyPrefers
+        #else
+        keyboardType.prefersAutocomplete
+        #endif
     }
 
     /// The return key type type to use.

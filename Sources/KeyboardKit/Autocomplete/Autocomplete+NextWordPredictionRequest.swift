@@ -10,11 +10,22 @@ import Foundation
 
 public extension Autocomplete {
 
-    /// This type can be used by ``Autocomplete/LocalService``
-    /// to perform next word prediction.
+    /// This type can be used to enable next word prediction.
     ///
-    /// You can use any of the predefined request types, for
-    /// instance ``claude(apiKey:apiVersion:apiUrl:model:maxTokens:system:)``.
+    /// You can easily enable next word prediction by adding
+    /// a pre-defined request type to your ``KeyboardApp``'s
+    /// ``KeyboardApp/autocomplete`` value. You can also add
+    /// a request to ``Autocomplete/LocalAutocompleteService``
+    /// at any time, e.g. to let your users set up their own
+    /// service configuration and API key.
+    ///
+    /// KeyboardKit Pro unlocks some pre-configured requests:
+    ///
+    /// - ``claude(apiKey:apiUrl:anthropicVersion:model:maxTokens:systemPrompt:)``
+    /// - ``openAI(apiKey:apiUrl:apiKeyHeader:apiKeyValuePrefix:model:maxTokens:systemPrompt:)``
+    ///
+    /// You have to provide your own private API keys to use
+    /// these requests.
     struct NextWordPredictionRequest {
 
         enum RequestError: Error {
@@ -22,6 +33,9 @@ public extension Autocomplete {
         }
 
         typealias Text = String
+
+        /// The request type.
+        public var type: NextWordPredictionRequestType
 
         var predictionRequest: (Text) throws -> URLRequest
         var predictionParser: (Data) throws -> [String]

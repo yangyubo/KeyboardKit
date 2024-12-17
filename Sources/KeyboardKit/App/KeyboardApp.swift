@@ -9,12 +9,11 @@
 import Foundation
 import SwiftUI
 
-/// This type can be used to define important app properties,
-/// and is also a namespace for KeyboardKit Pro app features.
+/// This type can be used to define important properties for
+/// your app, and is also a namespace for app-based features.
 ///
 /// You can create a static app value and add it to both the
-/// main app target and its keyboard extension target, to be
-/// able to easily refer to it from both targets:
+/// app and its keyboard, to be able to use it in both, e.g.:
 ///
 /// ```swift
 /// extension KeyboardApp {
@@ -25,21 +24,18 @@ import SwiftUI
 ///             bundleId: "com.keyboardkit.demo",
 ///             appGroupId: "group.com.keyboardkit.demo",
 ///             locales: [.english, .swedish, .persian],
+///             autocomplete: .init(...),
 ///             deepLinks: .init(app: "keyboardkit://")
 ///         )
 ///     }
 /// }
 /// ```
 ///
-/// The app value can also resolve other properties that you
-/// may need, such as a ``dictationConfiguration``.
-///
-/// > Important: The ``locales`` collection is only meant to
-/// describe which locales you *want* to use in your app. It
+/// > Important: The ``locales`` collection is only describe which locales you *want* to use in your app. It
 /// will be capped to the number of locales your KeyboardKit
 /// Pro license includes.
 ///
-/// See the <doc:App-Article> article for more information.
+/// See <doc:App-Article> for more information.
 public struct KeyboardApp {
 
     /// Create a custom keyboard app value.
@@ -51,9 +47,33 @@ public struct KeyboardApp {
     ///   - keyboardBundleId: The app's keyboard bundle identifier, by default `<bundleId>.keyboard`.
     ///   - appGroupId: The app's App Group identifier, if any.
     ///   - locales: The locales to use in the app, by default `.all`.
-    ///   - autocompleteConfiguration: The autocomplete configuration to use.
+    ///   - autocomplete: The autocomplete configuration to use.
     ///   - deepLinks: App-specific deep links, if any.
     ///   - keyboardSettingsKeyPrefix: A custom keyboard settings key prefix, if any.
+    public init(
+        name: String,
+        licenseKey: String? = nil,
+        bundleId: String,
+        keyboardBundleId: String? = nil,
+        appGroupId: String? = nil,
+        locales: [Locale] = .keyboardKitSupported,
+        autocomplete: AutocompleteConfiguration = .init(),
+        deepLinks: DeepLinks? = nil,
+        keyboardSettingsKeyPrefix: String? = nil
+    ) {
+        self.name = name
+        self.bundleId = bundleId
+        self.appGroupId = appGroupId
+        self.keyboardBundleId = keyboardBundleId ?? "\(bundleId).keyboard"
+        self.locales = locales
+        self.licenseKey = licenseKey
+        self.autocomplete = autocomplete
+        self.deepLinks = deepLinks
+        self.keyboardSettingsKeyPrefix = keyboardSettingsKeyPrefix
+    }
+
+    @available(*, deprecated, message: "Migration Deprecation, will be removed in 9.1! autocompleteConfiguration has been renamed to just autocomplete.")
+    @_disfavoredOverload
     public init(
         name: String,
         licenseKey: String? = nil,
@@ -65,16 +85,21 @@ public struct KeyboardApp {
         deepLinks: DeepLinks? = nil,
         keyboardSettingsKeyPrefix: String? = nil
     ) {
-        self.name = name
-        self.bundleId = bundleId
-        self.appGroupId = appGroupId
-        self.keyboardBundleId = keyboardBundleId ?? "\(bundleId).keyboard"
-        self.locales = locales
-        self.licenseKey = licenseKey
-        self.autocompleteConfiguration = autocompleteConfiguration
-        self.deepLinks = deepLinks
-        self.keyboardSettingsKeyPrefix = keyboardSettingsKeyPrefix
+        self.init(
+            name: name,
+            licenseKey: licenseKey,
+            bundleId: bundleId,
+            keyboardBundleId: keyboardBundleId,
+            appGroupId: appGroupId,
+            locales: locales,
+            autocomplete: autocompleteConfiguration,
+            deepLinks: deepLinks,
+            keyboardSettingsKeyPrefix: keyboardSettingsKeyPrefix
+        )
     }
+
+    @available(*, deprecated, renamed: "autocomplete", message: "Migration Deprecation, will be removed in 9.1!")
+    public var autocompleteConfiguration: AutocompleteConfiguration { autocomplete }
 
     /// The name of the app.
     public let name: String
@@ -98,7 +123,7 @@ public struct KeyboardApp {
     public let deepLinks: DeepLinks?
 
     /// The autocomplete configuration to use.
-    public let autocompleteConfiguration: AutocompleteConfiguration
+    public let autocomplete: AutocompleteConfiguration
 
     /// A custom keyboard settings key prefix, if any.
     public let keyboardSettingsKeyPrefix: String?
@@ -154,13 +179,39 @@ public extension KeyboardApp {
             self.themeSettings = themeSettings ?? "\(app)themeSettings"
         }
 
+        /// A deep link for opening the app.
         public let app: String
+
+        /// A deep link for opening the app and starting dictation.
         public let dictation: String
+
+        /// A deep link for opening the app's keyboard settings screen.
         public let keyboardSettings: String
+
+        /// A deep link for opening the app's language settings screen.
         public let languageSettings: String
+
+        /// A deep link for opening the app's theme settings screen.
         public let themeSettings: String
     }
+}
 
+public extension KeyboardApp.DeepLinks {
+
+    /// A deep link for opening the app.
+    var appURL: URL? { .init(string: app) }
+
+    /// A deep link for opening the app and starting dictation.
+    var dictationURL: URL? { .init(string: dictation) }
+
+    /// A deep link for opening the app's keyboard settings screen.
+    var keyboardSettingsURL: URL? { .init(string: keyboardSettings) }
+
+    /// A deep link for opening the app's language settings screen.
+    var languageSettingsURL: URL? { .init(string: languageSettings) }
+
+    /// A deep link for opening the app's theme settings screen.
+    var themeSettingsURL: URL? { .init(string: themeSettings) }
 }
 
 public extension KeyboardApp {

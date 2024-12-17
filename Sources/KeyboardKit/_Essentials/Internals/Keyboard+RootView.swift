@@ -24,23 +24,29 @@ extension Keyboard {
         private var autocompleteContext: AutocompleteContext
 
         @EnvironmentObject
-        private var calloutContext: CalloutContext
+        private var calloutContext: KeyboardCalloutContext
 
         @EnvironmentObject
         private var dictationContext: DictationContext
 
         @EnvironmentObject
-        private var feedbackContext: FeedbackContext
+        private var externalContext: ExternalKeyboardContext
+
+        @EnvironmentObject
+        private var feedbackContext: KeyboardFeedbackContext
 
         @EnvironmentObject
         private var keyboardContext: KeyboardContext
 
         @EnvironmentObject
-        private var keyboardSettings: KeyboardSettings
-
+        private var themeContext: KeyboardThemeContext
 
         var body: some View {
             view()
+                .onChange(of: externalContext.isExternalKeyboardConnected) { newValue in
+                    guard keyboardContext.settings.isKeyboardAutoCollapseEnabled else { return }
+                    keyboardContext.isKeyboardCollapsed = newValue
+                }
         }
     }
 }

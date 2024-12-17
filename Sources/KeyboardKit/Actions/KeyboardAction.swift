@@ -22,17 +22,12 @@ import UIKit
 /// trigger actions with a ``KeyboardActionHandler``.
 ///
 /// The documentation for each action describes the standard
-/// behavior when using a ``KeyboardAction/StandardHandler``,
-/// with a ``Keyboard/StandardBehavior``.
+/// behavior when using a ``StandardActionHandler``. Actions
+/// that don't have a standard behavior must be handled with
+/// a custom ``KeyboardActionHandler``.
 ///
-/// Types that don't define any standard behaviors require a
-/// custom ``KeyboardActionHandler`` to be handled.
-///
-/// See the <doc:Actions-Article> article for more information.
+/// See <doc:Actions-Article> for more information.
 public enum KeyboardAction: Codable, Equatable {
-
-    /// Handle a certain autocomplete suggestion.
-    // case autocompleteSuggestion(Autocomplete.Suggestion)
 
     /// Deletes backwards when pressed, and repeats until released.
     case backspace
@@ -137,30 +132,40 @@ public enum KeyboardAction: Codable, Equatable {
     case text(String)
 
     /// Open an url when released, using a custom id for identification.
-    case url(_ url: URL?, id: String? = nil)
+    case url(_ url: URL?, id: String?)
 }
 
 extension UIKeyboardHIDUsage: Codable {}
 
 public extension KeyboardAction {
     
-    /// An `.emoji(_:)` shorthand that inserts an emoji when
-    /// released.
-    ///
-    /// > Note: This typealias is meant to make it easier to
-    /// find the ``KeyboardAction/diacritic(_:)`` action.
+    /// An ``KeyboardAction/diacritic(_:)`` alias.
     static func accent(
         _ accent: Keyboard.Accent
     ) -> KeyboardAction {
         .diacritic(accent)
     }
-    
-    /// An `.emoji(_:)` shorthand that inserts an emoji when
-    /// released.
+
+    /// An `emoji(_:)` shorthand.
     static func emoji(
         _ char: String
     ) -> KeyboardAction {
         .emoji(.init(char))
+    }
+
+    /// An ``KeyboardAction/url(_:id:)`` shorthand.
+    static func url(
+        _ url: URL?
+    ) -> KeyboardAction {
+        .url(url, id: nil)
+    }
+
+    /// An ``KeyboardAction/url(_:id:)`` shorthand.
+    static func url(
+        _ url: String?
+    ) -> KeyboardAction {
+        guard let url else { return .url(.init(string: ""), id: nil) }
+        return .url(.init(string: url), id: nil)
     }
 }
 

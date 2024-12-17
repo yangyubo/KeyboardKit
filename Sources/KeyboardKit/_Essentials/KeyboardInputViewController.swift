@@ -41,6 +41,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     // MARK: - View Controller Lifecycle
 
     open override func viewDidLoad() {
+        state.setup(for: self)
         super.viewDidLoad()
         setupInitialWidth()
         setupLocaleObservation()
@@ -101,6 +102,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
                 services: controller.services,
                 buttonContent: { $0.view },
                 buttonView: { $0.view },
+                collapsedView: { $0.view },
                 emojiKeyboard: { $0.view },
                 toolbar: { $0.view }
             )
@@ -108,7 +110,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     }
 
     /// This function is called when the controller is about
-    /// to sync with the ``Keyboard/KeyboardState`` contexts.
+    /// to sync with the various ``Keyboard/State`` contexts.
     open func viewWillSyncWithContext() {
         performKeyboardContextSync()
     }
@@ -118,17 +120,17 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
     /// Set up KeyboardKit for a ``KeyboardApp``.
     ///
-    /// This will configure ``KeyboardSettings`` with an App
-    /// Group-synced ``KeyboardSettings/store``, if the `app`
-    /// is configured with an ``KeyboardApp/appGroupId``. It
-    /// will also set up the controller ``state``.
+    /// This will set up ``Keyboard/Settings`` to use an App
+    /// Group-synced store, if the app is configured with an
+    /// ``KeyboardApp/appGroupId``. It will also set up your
+    /// controller's main ``state`` for the app.
     ///
     /// Call this in ``viewDidLoad()`` to make sure that the
     /// keyboard is properly configured as early as possible.
     open func setup(
         for app: KeyboardApp
     ) {
-        KeyboardSettings.setupStore(for: app)
+        Keyboard.Settings.setupStore(for: app)
         state.setup(for: app)
     }
 
@@ -140,21 +142,17 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     /// Call this in ``viewWillSetupKeyboardView()`` to make
     /// the controller use the `view` as keyboard view.
     open func setupKeyboardView<Content: View>(
-        _ view: @autoclosure @escaping () -> Content
+        with view: @autoclosure @escaping () -> Content
     ) {
         guard setupKeyboardViewIsEnabled else { return }
         setup(withRootView: Keyboard.RootView(view))
     }
 
-    /// Set up KeyboardKit with a custom keyboard view.
+    /// Set up KeyboardKit with a custom view and an unowned
+    /// ``KeyboardInputViewController`` reference.
     ///
     /// Call this in ``viewWillSetupKeyboardView()`` to make
     /// the controller use the view as the keyboard view.
-    ///
-    /// See <doc:Getting-Started-Article> for more important
-    /// information on how to use an weak or unowned self to
-    /// avoid memory leaks when you must refer to a specific
-    /// controller class.
     open func setupKeyboardView<Content: View>(
         _ view: @escaping (_ controller: KeyboardInputViewController) -> Content
     ) {
@@ -172,7 +170,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
 
     // MARK: - Proxy Properties
-    
+
     /// The original text document proxy.
     open var originalTextDocumentProxy: UITextDocumentProxy {
         super.textDocumentProxy
@@ -197,12 +195,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     }()
 
     /// Keyboard-specific state.
-    public lazy var state: Keyboard.State = {
-        let instance = Keyboard.State()
-        instance.setup(for: self)
-        return instance
-    }()
-
+    public var state = Keyboard.State()
 
 
     // MARK: - Text And Selection Change
@@ -221,14 +214,14 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
         super.textWillChange(textInput)
         state.keyboardContext.syncTextDocumentProxy(with: self)
     }
-    
+
     open override func textDidChange(_ textInput: UITextInput?) {
         super.textDidChange(textInput)
         DispatchQueue.main.async { [weak self] in
             self?.textDidChangeAsync(textInput)
         }
     }
-    
+
     /// This function will be called with an async delay, to
     /// give the text document proxy time to update itself.
     open func textDidChangeAsync(_ textInput: UITextInput?) {
@@ -238,7 +231,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
 
     // MARK: - KeyboardController
-    
+
     open func adjustTextPosition(by offset: Int) {
         textDocumentProxy.adjustTextPosition(byCharacterOffset: offset)
     }
@@ -300,7 +293,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     open var isContextSyncEnabled: Bool {
         !textDocumentProxy.isReadingFullDocumentContext
     }
-    
+
     /// Perform a keyboard context sync.
     ///
     /// This is performed to keep the ``state`` in sync, and
@@ -312,6 +305,8 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
 
     // MARK: - Autocomplete
+
+    var lastAutocompleteText = ""
 
     /// The text to use when performing autocomplete.
     ///
@@ -337,6 +332,8 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     open func performAutocomplete() {
         guard isAutocompleteEnabled else { return }
         let text = autocompleteText ?? ""
+        guard text != lastAutocompleteText else { return }
+        lastAutocompleteText = text
         let context = state.autocompleteContext
         let service = services.autocompleteService
         service.autocomplete(text, updating: context)
@@ -366,7 +363,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 // MARK: - Private Functions
 
 private extension KeyboardInputViewController {
-    
+
     /// Update the last received dictation error.
     func updateLastDictationError(_ error: Error) async {
         await MainActor.run {

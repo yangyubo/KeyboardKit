@@ -9,10 +9,9 @@
 import SwiftUI
 
 /// This view renders button item for a ``KeyboardView``.
-/// 
-/// The reason why the ``KeyboardView`` doesn't just use the
-/// ``Keyboard/Button`` view, is that this view applies more
-/// insets and configurations to the content.
+///
+/// Unlike ``Keyboard/Button`` this view applies more insets
+/// and configurations to make it work in a ``KeyboardView``.
 public struct KeyboardViewItem<Content: View>: View {
 
     /// Create a keyboard view item.
@@ -27,6 +26,7 @@ public struct KeyboardViewItem<Content: View>: View {
     ///   - keyboardWidth: The total width of the keyboard.
     ///   - inputWidth: The input width within the keyboard.
     ///   - isNextProbability: The probability (0-1) that the button will be tapped next.
+    ///   - isGestureAutoCancellable: Whether an aborted gesture will auto-cancel itself, by default `false`.
     ///   - content: The content view to use within the item.
     public init(
         item: KeyboardLayout.Item,
@@ -34,10 +34,11 @@ public struct KeyboardViewItem<Content: View>: View {
         repeatTimer: GestureButtonTimer? = nil,
         styleService: KeyboardStyleService,
         keyboardContext: KeyboardContext,
-        calloutContext: CalloutContext?,
+        calloutContext: KeyboardCalloutContext?,
         keyboardWidth: CGFloat,
         inputWidth: CGFloat,
         isNextProbability: Double = 0,
+        isGestureAutoCancellable: Bool? = nil,
         content: Content
     ) {
         self.item = item
@@ -49,6 +50,7 @@ public struct KeyboardViewItem<Content: View>: View {
         self.keyboardWidth = keyboardWidth
         self.inputWidth = inputWidth
         self.isNextProbability = isNextProbability
+        self.isGestureAutoCancellable = isGestureAutoCancellable
         self.content = content
     }
 
@@ -56,10 +58,11 @@ public struct KeyboardViewItem<Content: View>: View {
     private let actionHandler: KeyboardActionHandler
     private let repeatTimer: GestureButtonTimer?
     private let styleService: KeyboardStyleService
-    private let calloutContext: CalloutContext?
+    private let calloutContext: KeyboardCalloutContext?
     private let keyboardWidth: CGFloat
     private let inputWidth: CGFloat
     private let isNextProbability: Double
+    private let isGestureAutoCancellable: Bool?
     private let content: Content
     
     @ObservedObject
@@ -89,7 +92,8 @@ public struct KeyboardViewItem<Content: View>: View {
             calloutContext: calloutContext,
             additionalTapArea: isNextProbability * 5,
             edgeInsets: item.edgeInsets,
-            isPressed: $isPressed
+            isPressed: $isPressed,
+            isGestureAutoCancellable: isGestureAutoCancellable
         )
     }
     
@@ -117,6 +121,7 @@ public struct KeyboardViewItem<Content: View>: View {
         calloutContext: .preview,
         keyboardWidth: 100,
         inputWidth: 100,
+        isGestureAutoCancellable: false,
         content: Text("HEJ")
     )
     .background(Color.red)

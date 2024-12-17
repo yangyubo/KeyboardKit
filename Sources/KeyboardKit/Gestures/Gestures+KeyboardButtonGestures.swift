@@ -13,9 +13,6 @@ extension Gestures {
 
     /// This view applies keyboard gestures to any view.
     struct KeyboardButtonGestures<Content: View>: View {
-        
-        @Environment(\.actionCalloutStyle)
-        private var actionCalloutStyle
 
         /// Apply a set of action gestures to a view.
         ///
@@ -25,6 +22,7 @@ extension Gestures {
         ///   - repeatTimer: The repeat gesture timer to use, if any.
         ///   - calloutContext: The callout context to affect, if any.
         ///   - isPressed: An optional binding that can be used to observe the button pressed state.
+        ///   - isGestureAutoCancellable: Whether an aborted gesture will auto-cancel itself, by default `false`.
         ///   - scrollState: The scroll state to use, if any.
         ///   - releaseOutsideTolerance: The percentage of the button size outside its bounds that should count as a release, by default `1.0`.
         ///   - doubleTapAction: The action to trigger when the button is double tapped.
@@ -38,8 +36,9 @@ extension Gestures {
             view: Content,
             action: KeyboardAction?,
             repeatTimer: GestureButtonTimer?,
-            calloutContext: CalloutContext?,
+            calloutContext: KeyboardCalloutContext?,
             isPressed: Binding<Bool>,
+            isGestureAutoCancellable: Bool? = nil,
             scrollState: GestureButtonScrollState?,
             releaseOutsideTolerance: Double? = nil,
             doubleTapAction: KeyboardGestureAction?,
@@ -57,6 +56,7 @@ extension Gestures {
             self.isPressed = isPressed
             self.scrollState = scrollState
             self.releaseOutsideTolerance = releaseOutsideTolerance ?? 1.0
+            self.cancelDelay = (isGestureAutoCancellable ?? false) ? 3 : nil
             self.doubleTapAction = doubleTapAction
             self.longPressAction = longPressAction
             self.pressAction = pressAction
@@ -69,10 +69,11 @@ extension Gestures {
         private let view: Content
         private let action: KeyboardAction?
         private let repeatTimer: GestureButtonTimer?
-        private let calloutContext: CalloutContext?
+        private let calloutContext: KeyboardCalloutContext?
         private let isPressed: Binding<Bool>
         private let scrollState: GestureButtonScrollState?
         private let releaseOutsideTolerance: Double
+        private let cancelDelay: Double?
         private let doubleTapAction: KeyboardGestureAction?
         private let longPressAction: KeyboardGestureAction?
         private let pressAction: KeyboardGestureAction?
@@ -87,7 +88,21 @@ extension Gestures {
         var body: some View {
             view.overlay(
                 GeometryReader { geo in
-                    button(for: geo)
+                    GestureButton(
+                        isPressed: isPressed,
+                        scrollState: scrollState,
+                        pressAction: { handlePress(in: geo) },
+                        cancelDelay: cancelDelay,
+                        releaseInsideAction: { handleReleaseInside(in: geo) },
+                        releaseOutsideAction: { handleReleaseOutside(in: geo) },
+                        longPressAction: { handleLongPress(in: geo) },
+                        doubleTapAction: { handleDoubleTap(in: geo) },
+                        repeatTimer: repeatTimer,
+                        repeatAction: { handleRepeat(in: geo) },
+                        dragAction: { handleDrag(in: geo, value: $0) },
+                        endAction: { handleGestureEnded(in: geo) },
+                        label: { _ in Color.clearInteractable }
+                    )
                 }
             )
         }
@@ -106,28 +121,6 @@ private extension View {
     }
 }
 
-// MARK: - Views
-
-private extension Gestures.KeyboardButtonGestures {
-
-    func button(for geo: GeometryProxy) -> some View {
-        GestureButton(
-            isPressed: isPressed,
-            scrollState: scrollState,
-            pressAction: { handlePress(in: geo) },
-            releaseInsideAction: { handleReleaseInside(in: geo) },
-            releaseOutsideAction: { handleReleaseOutside(in: geo) },
-            longPressAction: { handleLongPress(in: geo) },
-            doubleTapAction: { handleDoubleTap(in: geo) },
-            repeatTimer: repeatTimer,
-            repeatAction: { handleRepeat(in: geo) },
-            dragAction: { handleDrag(in: geo, value: $0) },
-            endAction: { handleGestureEnded(in: geo) },
-            label: { _ in Color.clearInteractable }
-        )
-    }
-}
-
 
 // MARK: - Actions
 
@@ -139,13 +132,13 @@ private extension Gestures.KeyboardButtonGestures {
 
     func handleDrag(in geo: GeometryProxy, value: DragGesture.Value) {
         lastDragValue = value
-        calloutContext?.actionContext.updateSelection(with: value, style: actionCalloutStyle)
+        calloutContext?.updateSecondaryActionsSelection(with: value.translation)
         dragAction?(value.startLocation, value.location)
     }
 
     func handleGestureEnded(in geo: GeometryProxy) {
-        calloutContext?.inputContext.resetWithDelay()
-        calloutContext?.actionContext.reset()
+        calloutContext?.resetInputActionWithDelay()
+        calloutContext?.resetSecondaryActions()
         resetGestureState()
         endAction?()
     }
@@ -157,7 +150,7 @@ private extension Gestures.KeyboardButtonGestures {
 
     func handlePress(in geo: GeometryProxy) {
         pressAction?()
-        calloutContext?.inputContext.updateInput(for: action, in: geo)
+        calloutContext?.updateInputAction(action, in: geo)
     }
 
     func handleReleaseInside(in geo: GeometryProxy) {
@@ -176,10 +169,10 @@ private extension Gestures.KeyboardButtonGestures {
     }
 
     func tryBeginActionCallout(in geo: GeometryProxy) {
-        guard let context = calloutContext?.actionContext else { return }
-        context.updateInputs(for: action, in: geo)
-        guard context.isActive else { return }
-        calloutContext?.inputContext.reset()
+        guard let context = calloutContext else { return }
+        context.updateSecondaryActions(for: action, in: geo)
+        guard !context.secondaryActions.isEmpty else { return }
+        calloutContext?.resetInputAction()
     }
 
     func resetGestureState() {
@@ -194,10 +187,8 @@ private extension Gestures.KeyboardButtonGestures {
     }
 
     func tryHandleCalloutAction() -> Bool {
-        guard
-            let context = calloutContext?.actionContext
-        else { return false }
-        return context.handleSelectedAction()
+        guard let context = calloutContext else { return false }
+        return context.handleSelectedSecondaryAction()
     }
 }
 

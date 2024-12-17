@@ -22,7 +22,7 @@ import CoreGraphics
 /// it at any time to customize the keyboard action handling.
 ///
 /// See <doc:Actions-Article> for more information.
-public protocol KeyboardActionHandler: AnyObject, FeedbackService {
+public protocol KeyboardActionHandler: AnyObject, KeyboardFeedbackService {
 
 
     /// Whether the handler can handle an action gesture.
@@ -59,4 +59,21 @@ public protocol KeyboardActionHandler: AnyObject, FeedbackService {
         for gesture: Keyboard.Gesture,
         on action: KeyboardAction
     )
+}
+
+public extension KeyboardActionHandler {
+
+    /// Handle a certain keyboard action.
+    func handle(
+        action: KeyboardAction
+    ) {
+        handle(action)
+    }
+
+    /// Handle a certain autocomplete suggestion.
+    func handle(
+        suggestion: Autocomplete.Suggestion
+    ) {
+        handle(suggestion)
+    }
 }
