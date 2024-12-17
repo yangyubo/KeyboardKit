@@ -20,8 +20,8 @@ import SwiftUI
 /// and the ``KeyboardInputViewController/services`` service
 /// instances to customize it, you don't have to do anything.
 ///
-/// See the <doc:Essentials-Article> article for more information on
-/// how you can customize this and other system views.
+/// See the <doc:Essentials-Article> article for information
+/// on how to customize this and other views in this library.
 public struct KeyboardView<
     ButtonContent: View,
     ButtonView: View,
@@ -37,7 +37,7 @@ public struct KeyboardView<
     ///   - renderBackground: Whether to render the background.
     ///   - buttonContent: The content view to use for buttons.
     ///   - buttonView: The button view to use for an buttons.
-    ///   - emojiKeyboard: The emoji keyboard to use for an ``Keyboard/KeyboardType/emojis`` keyboard.
+    ///   - emojiKeyboard: The emoji keyboard to use.
     ///   - toolbar: The toolbar view to add above the keyboard.
     public init(
         layout: KeyboardLayout? = nil,
@@ -96,11 +96,13 @@ public struct KeyboardView<
         @ViewBuilder emojiKeyboard: @escaping EmojiKeyboardBuilder,
         @ViewBuilder toolbar: @escaping ToolbarBuilder
     ) {
+        var layout = layout
+        let layoutConfig = KeyboardLayout.Configuration.standard(for: keyboardContext)
         if !Emoji.KeyboardWrapper.isEmojiKeyboardAvailable {
             layout.itemRows.remove(.keyboardType(.emojis))
         }
         self.rawLayout = layout
-        self.layoutConfig = .standard(for: keyboardContext)
+        self.layoutConfig = layoutConfig
         self.actionHandler = actionHandler
         self.repeatTimer = repeatTimer
         self.styleService = styleService
@@ -109,38 +111,24 @@ public struct KeyboardView<
         self.buttonViewBuilder = buttonView
         self.emojiKeyboardBuilder = emojiKeyboard
         self.toolbarBuilder = toolbar
+
         _autocompleteContext = ObservedObject(wrappedValue: autocompleteContext)
         _calloutContext = ObservedObject(wrappedValue: calloutContext ?? .disabled)
         _keyboardContext = ObservedObject(wrappedValue: keyboardContext)
-    }
 
-    @available(*, deprecated, message: "Use the styleService initializer instead.")
-    public init(
-        layout: KeyboardLayout,
-        actionHandler: KeyboardActionHandler,
-        styleProvider: KeyboardStyleProvider,
-        keyboardContext: KeyboardContext,
-        autocompleteContext: AutocompleteContext,
-        calloutContext: CalloutContext?,
-        renderBackground: Bool = true,
-        @ViewBuilder buttonContent: @escaping ButtonContentBuilder,
-        @ViewBuilder buttonView: @escaping ButtonViewBuilder,
-        @ViewBuilder emojiKeyboard: @escaping EmojiKeyboardBuilder,
-        @ViewBuilder toolbar: @escaping ToolbarBuilder
-    ) {
-        self.init(
-            layout: layout,
-            actionHandler: actionHandler,
-            styleService: styleProvider,
-            keyboardContext: keyboardContext,
-            autocompleteContext: autocompleteContext,
-            calloutContext: calloutContext,
-            renderBackground: renderBackground,
-            buttonContent: buttonContent,
-            buttonView: buttonView,
-            emojiKeyboard: emojiKeyboard,
-            toolbar: toolbar
-        )
+        self.actionCalloutStyle = {
+            var style = styleService.actionCalloutStyle
+            let insets = layoutConfig.buttonInsets
+            style.callout.buttonInset = CGSize(width: insets.leading, height: insets.top)
+            return style
+        }()
+
+        self.inputCalloutStyle = {
+            var style = styleService.inputCalloutStyle
+            let insets = layoutConfig.buttonInsets
+            style.callout.buttonInset = CGSize(width: insets.leading, height: insets.top)
+            return style
+        }()
     }
 
     private let actionHandler: KeyboardActionHandler
@@ -154,28 +142,9 @@ public struct KeyboardView<
     private let buttonViewBuilder: ButtonViewBuilder
     private let emojiKeyboardBuilder: EmojiKeyboardBuilder
     private let toolbarBuilder: ToolbarBuilder
-
     
-    /// This typealias defines a emoji keyboard builder.
-    public typealias EmojiKeyboardBuilder = (EmojiKeyboardParams) -> EmojiKeyboard
-    
-    /// This typealias defines a toolbar builder.
-    public typealias ToolbarBuilder = (ToolbarParams) -> Toolbar
-    
-    
-    private var actionCalloutStyle: Callouts.ActionCalloutStyle {
-        var style = styleService.actionCalloutStyle
-        let insets = layoutConfig.buttonInsets
-        style.callout.buttonInset = CGSize(width: insets.leading, height: insets.top)
-        return style
-    }
-
-    private var inputCalloutStyle: Callouts.InputCalloutStyle {
-        var style = styleService.inputCalloutStyle
-        let insets = layoutConfig.buttonInsets
-        style.callout.buttonInset = CGSize(width: insets.leading, height: insets.top)
-        return style
-    }
+    private var actionCalloutStyle: Callouts.ActionCalloutStyle
+    private var inputCalloutStyle: Callouts.InputCalloutStyle
 
     @ObservedObject
     private var autocompleteContext: AutocompleteContext
@@ -211,6 +180,35 @@ public struct KeyboardView<
     }
 }
 
+public extension KeyboardView {
+
+    /// This typealias defines an emoji keyboard builder.
+    typealias EmojiKeyboardBuilder = (EmojiKeyboardParams) -> EmojiKeyboard
+
+    /// This typealias defines emoji keyboard builder params.
+    typealias EmojiKeyboardParams = (
+        style: Emoji.KeyboardStyle,
+        view: StandardEmojiKeyboard)
+
+    /// This typealias defines a toolbar builder.
+    typealias ToolbarBuilder = (ToolbarParams) -> Toolbar
+
+    /// This typealias defines toolbar builder params.
+    typealias ToolbarParams = (
+        autocompleteAction: (Autocomplete.Suggestion) -> Void,
+        style: Autocomplete.ToolbarStyle,
+        view: StandardToolbarView)
+}
+
+public extension KeyboardView {
+
+    /// The standard emoji keyboard view.
+    typealias StandardEmojiKeyboard = Emoji.KeyboardWrapper
+
+    /// The standard toolbar view.
+    typealias StandardToolbarView = Autocomplete.Toolbar<Autocomplete.ToolbarItem, Autocomplete.ToolbarSeparator>
+}
+
 private extension KeyboardView {
 
     var isLargePad: Bool {
@@ -231,11 +229,26 @@ private extension KeyboardView {
             layoutConfiguration: layoutConfig
         )
     }
-    
+
     var shouldShowKeyboard: Bool {
         switch keyboardContext.keyboardType {
         case .emojis: false
         case .numberPad: false
+        default: true
+        }
+    }
+
+    var shouldShowEmojiKeyboard: Bool {
+        switch keyboardContext.keyboardType {
+        case .emojis: true
+        case .emojiSearch: true
+        default: false
+        }
+    }
+
+    var shouldShowToolbar: Bool {
+        switch keyboardContext.keyboardType {
+        case .emojiSearch: false
         default: true
         }
     }
@@ -260,23 +273,22 @@ private extension KeyboardView {
                 }
             }
             .padding(styleService.keyboardEdgeInsets)
-            .environment(\.layoutDirection, .leftToRight)
+            .environment(\.layoutDirection, .leftToRight)   // Enforce a direction due to the layout.
         }
         .frame(height: layout.totalHeight)
-        .id(keyboardContext.locale.identifier)
     }
     
     @ViewBuilder
     var emojiKeyboard: some View {
         emojiKeyboardContent
-            .id(keyboardContext.interfaceOrientation)           // TODO: Temp orientation fix
+            .id(keyboardContext.interfaceOrientation)       // TODO: Temp orientation fix, still needed?
     }
 
     @ViewBuilder
     var emojiKeyboardContent: some View {
-        if keyboardContext.keyboardType == .emojis {
+        if shouldShowEmojiKeyboard {                        // Conditional to save memory
             emojiKeyboardBuilder((
-                style: EmojiKeyboardStyle.standard(for: keyboardContext),
+                style: Emoji.KeyboardStyle.standard(for: keyboardContext),
                 view: Emoji.KeyboardWrapper(
                     actionHandler: actionHandler,
                     keyboardContext: keyboardContext,
@@ -302,17 +314,20 @@ private extension KeyboardView {
     }
 
     var toolbar: some View {
-        toolbarBuilder((
+        let style = styleService.autocompleteToolbarStyle
+        return toolbarBuilder((
             autocompleteAction: actionHandler.handle(_:),
             style: styleService.autocompleteToolbarStyle,
             view: Autocomplete.Toolbar(
                 suggestions: autocompleteContext.suggestions,
-                locale: keyboardContext.locale,
-                style: styleService.autocompleteToolbarStyle,
+                itemView: { $0.view },
+                separatorView: { $0.view },
                 suggestionAction: actionHandler.handle(_:)
             )
         ))
-        .frame(minHeight: styleService.autocompleteToolbarStyle.height)
+        .opacity(shouldShowToolbar ? 1 : 0)
+        .autocompleteToolbarStyle(style)
+        .frame(minHeight: style.height)
     }
 }
 
@@ -370,7 +385,7 @@ private extension KeyboardView {
                 .init(text: "Baz")
             ]
             // controller.services.styleService = .crazy
-            // controller.state.keyboardContext.keyboardType = .numeric
+            // controller.state.keyboardContext.keyboardType = .emojiSearch
             return controller
         }()
         
@@ -428,7 +443,7 @@ private extension KeyboardView {
                             },
                             emojiKeyboard: { _ in
                                 Button {
-                                    controller.state.keyboardContext.keyboardType = .alphabetic(.lowercased)
+                                    controller.state.keyboardContext.keyboardType = .alphabetic
                                 } label: {
                                     Color.red
                                         .overlay(Text("Not implemented"))

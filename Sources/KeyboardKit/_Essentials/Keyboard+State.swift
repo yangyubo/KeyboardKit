@@ -49,13 +49,7 @@ public extension Keyboard.State {
 
     // Setup the state instance for the provided app.
     func setup(for app: KeyboardApp) {
-        setupDictation(for: app)
-    }
-
-    // Setup the state instance for the provided app.
-    func setupDictation(for app: KeyboardApp) {
-        guard let config = app.dictationConfiguration else { return }
-        self.dictationContext = .init(config: config)
+        keyboardContext.app = app
     }
 }
 
@@ -65,10 +59,10 @@ public extension Keyboard.State {
     // Setup the state instance for the provided controller.
     func setup(for controller: KeyboardInputViewController) {
         let isPhone = UIDevice.current.userInterfaceIdiom == .phone
-        let keyboardType = controller.textDocumentProxy.keyboardType
-        let contextType = keyboardType?.keyboardType ?? .alphabetic(.auto)
+        let keyboardType = controller.originalTextDocumentProxy.keyboardType
         keyboardContext.sync(with: controller)
-        keyboardContext.keyboardType = contextType
+        keyboardContext.keyboardCase = .auto
+        keyboardContext.keyboardType = keyboardType?.keyboardType ?? .alphabetic
         calloutContext.inputContext.isEnabled = isPhone
     }
 }

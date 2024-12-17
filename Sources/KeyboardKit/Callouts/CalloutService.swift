@@ -9,7 +9,7 @@
 import Foundation
 
 /// This protocol can be implemented by any type that can be
-/// used to perform callout-related actions.
+/// used to perform keyboard callout-related actions.
 ///
 /// KeyboardKit will automatically setup a standard protocol
 /// implementation in ``KeyboardInputViewController/services``
@@ -17,7 +17,7 @@ import Foundation
 /// it at any time to customize the callout behavior.
 ///
 /// KeyboardKit Pro can be used to unlock localized services
-/// for each ``KeyboardLocale``.
+/// for all ``Foundation/Locale/keyboardKitSupported``.
 ///
 /// See <doc:Callouts-Article> for more information.
 public protocol CalloutService: AnyObject {

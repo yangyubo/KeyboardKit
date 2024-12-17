@@ -35,15 +35,15 @@ The <doc:Getting-Started-Article> article helps you get started with KeyboardKit
 
 ## Supported Locales
 
-KeyboardKit supports **68** keyboard-specific ``KeyboardLocale``s:
+KeyboardKit supports **70** keyboard-specific ``Locale``s:
 
-🇦🇱 🇦🇪 🇦🇲 🇧🇾 🇧🇬 🇦🇩 🏳️ 🇭🇷 🇨🇿 🇩🇰 <br />
-🇳🇱 🇧🇪 🇺🇸 🇬🇧 🇺🇸 🇪🇪 🇫🇴 🇵🇭 🇫🇮 🇫🇷 <br />
-🇨🇦 🇧🇪 🇨🇭 🇬🇪 🇩🇪 🇦🇹 🇨🇭 🇬🇷 🇺🇸 🇮🇱 <br />
-🇭🇺 🇮🇸 🏳️ 🇮🇩 🇮🇪 🇮🇹 🇰🇿 🇹🇯 🇹🇯 🇹🇯 <br />
-🇱🇻 🇱🇹 🇲🇰 🇲🇾 🇲🇹 🇲🇳 🇳🇴 🇳🇴 🏳️ 🇮🇷 <br />
-🇵🇱 🇵🇹 🇧🇷 🇷🇴 🇷🇺 🇷🇸 🇷🇸 🇸🇰 🇸🇮 🇪🇸 <br />
-🇦🇷 🇲🇽 🇰🇪 🇸🇪 🇹🇷 🇺🇦 🇺🇿 🏴󠁧󠁢󠁷󠁬󠁳󠁿 <br />
+🇺🇸 🇦🇱 🇦🇪 🇦🇲 🇧🇾 🇧🇬 🇦🇩 🏳️ 🇭🇷 🇨🇿  <br />
+🇩🇰 🇳🇱 🇧🇪 🇦🇺 🇨🇦 🇬🇧 🇺🇸 🇪🇪 🇫🇴 🇵🇭  <br />
+🇫🇮 🇫🇷 🇨🇦 🇧🇪 🇨🇭 🇬🇪 🇩🇪 🇦🇹 🇨🇭 🇬🇷  <br />
+🇺🇸 🇮🇱 🇭🇺 🇮🇸 🏳️ 🇮🇩 🇮🇪 🇮🇹 🇰🇿 🇹🇯  <br />
+🇹🇯 🇹🇯 🇱🇻 🇱🇹 🇲🇰 🇲🇾 🇲🇹 🇲🇳 🏳️ 🇳🇴  <br />
+🇳🇴 🇮🇷 🇵🇱 🇵🇹 🇧🇷 🇷🇴 🇷🇺 🇷🇸 🇷🇸 🇸🇰  <br />
+🇸🇮 🇪🇸 🇦🇷 🇲🇽 🇸🇪 🇰🇪 🇹🇷 🇺🇦 🇺🇿 🏴󠁧󠁢󠁷󠁬󠁳󠁿  <br />
 
 KeyboardKit provides a basic keyboard layout with basic callout actions. [KeyboardKit Pro][Pro] unlocks localized layouts, callouts & behaviors for all supported locales, as described in the <doc:Localization-Article> article.
 
@@ -64,7 +64,7 @@ KeyboardKit comes packed with features to help you build amazing keyboard extens
 * 👆 <doc:Gestures-Article> - Handle a rich set of gestures on any key.
 * 🏠 <doc:Host-Article> - Identify the host application.
 * 🔣 <doc:Layout-Article> - Define and customize dynamic keyboard layouts.
-* 🌐 <doc:Localization-Article> - Localize your keyboard in **68+ locales**.
+* 🌐 <doc:Localization-Article> - Localize your keyboard in **70 locales**.
 * 🗺️ <doc:Navigation-Article> - Open urls and other apps from the keyboard.
 * 👁 <doc:Previews-Article> - Extensive SwiftUI preview support.
 * ➡️ <doc:Proxy-Article> - Extend the text document proxy with more capabilities.
@@ -82,13 +82,13 @@ You can upgrade to [KeyboardKit Pro][Pro] to unlock Pro features.
 * 🤖 <doc:AI-Article> - Features that are needed for AI.
 * 📱 <doc:App-Article> - App-specific screens & views.
 * 💡 <doc:Autocomplete-Article> - On-device & remote autocomplete.
-* 🗯 <doc:Callouts-Article> - Localized callouts for **68 locales**.
+* 🗯 <doc:Callouts-Article> - Localized callouts for all locales.
 * 🎤 <doc:Dictation-Article> - Trigger dictation from the keyboard.
 * 😀 <doc:Emojis-Article> - A powerful emoji keyboard.
 * ⌨️ <doc:External-Keyboards-Article> - Detect if an external keyboard is connected.
 * 🏠 <doc:Host-Article> - Identify and open specific host applications.
-* 🔣 <doc:Layout-Article> - Localized layouts for **68 locales**.
-* 🌐 <doc:Localization-Article> - Services & views for **68 locales**.
+* 🔣 <doc:Layout-Article> - Localized layouts for all locales.
+* 🌐 <doc:Localization-Article> - Services & views for all locales.
 * 👁 <doc:Previews-Article> - Keyboard & theme previews for in-app use.
 * ➡️ <doc:Proxy-Article> - Let `UITextDocumentProxy` read the full document.
 * 📝 <doc:Text-Input-Article> - Let users type within the keyboard.
@@ -199,7 +199,6 @@ KeyboardKit is available under the MIT license.
 - ``Emoji``
 - ``EmojiCategory``
 - ``EmojiKeyboard``
-- ``EmojiKeyboardStyle``
 - ``EmojiVersion``
 
 ### External
@@ -235,9 +234,8 @@ KeyboardKit is available under the MIT license.
 
 ### Localization
 
-- ``KeyboardLocale``
-- ``KeyboardLocaleInfo``
 - ``KKL10n``
+- ``Foundation/Locale``
 - ``Localizable``
 - ``LocalizedService``
 

@@ -12,14 +12,13 @@ import SwiftUI
 /// be used to define a bunch of styles at once.
 ///
 /// A theme can be copied, tweaked, styled, etc. This struct
-/// implements `Codable` and can as such be easily persisted.
+/// implements the ``KeyboardThemeCopyable`` protocol to let
+/// it share copy logic with its style variation.
 ///
-/// KeyboardKit Pro unlocks theme initializers, capabilities,
-/// many predefined themes and style variations, and a theme
-/// based style service. You can use these predefined themes
-/// as they are, or use them as templates for new ones.
+/// KeyboardKit Pro unlocks a bunch of predefined themes and
+/// style variations, as well as a theme-based style service.
 ///
-/// See <doc:Themes-Article> for more information.
+/// See the <doc:Themes-Article> article for more information.
 public struct KeyboardTheme: KeyboardThemeCopyable, Codable, Equatable, Identifiable {
 
     /// This enum defines various button types.

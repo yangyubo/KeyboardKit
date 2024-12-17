@@ -16,7 +16,7 @@ public extension KeyboardAction {
         for context: KeyboardContext
     ) -> Image? {
         switch standardButtonText(for: context) {
-        case "↵", "↳": .keyboardNewline(for: context.locale)
+        case "↵", "↳": .keyboardNewline(for: context.locale)    // Used by localization
         default: standardButtonImageRaw(for: context)
         }
     }
@@ -63,7 +63,7 @@ private extension KeyboardAction {
         case .customKey(_, _, _, let imageName): imageName != nil ? Image(systemName: imageName!) : nil
         case .primary(let type): type.standardButtonImage(for: context.locale)
         case .settings: .keyboardSettings
-        case .shift(let currentCasing): .keyboardShift(currentCasing)
+        case .shift: .keyboardShift(context.keyboardCase)
         case .systemImage(_, let imageName, _): Image(systemName: imageName)
         case .systemSettings: .keyboardSettings
         case .tab: .keyboardTab

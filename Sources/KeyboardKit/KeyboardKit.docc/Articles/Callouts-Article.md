@@ -15,7 +15,7 @@ This article describes the KeyboardKit callout engine.
 
 Callouts are an important part of the typing experience, where input callouts can show the currently pressed key and action callouts can show secondary actions when certain keys are long pressed.
 
-KeyboardKit has ways to automatically show an ``Callouts/InputCallout`` when the user types, and has a ``CalloutService`` protocol that can provide actions to present in an ``Callouts/ActionCallout`` when long pressing certain keys.
+KeyboardKit can show an ``Callouts/InputCallout`` for the currently pressed input key, and an ``Callouts/ActionCallout`` with secondary actions when long pressing certain keys.
 
 👑 [KeyboardKit Pro][Pro] unlocks localized services for all locales. Information about Pro features can be found at the end of this article.
 
@@ -42,18 +42,6 @@ KeyboardKit automatically creates an instance of this class and injects it into 
 In KeyboardKit, a ``CalloutService`` can return secondary callout actions when a key is long pressed.
 
 KeyboardKit automatically creates an instance of ``Callouts/StandardService`` and injects it into ``KeyboardInputViewController/services``. You can replace it at any time, as described further down, or inject localized services into it with ``CalloutService/tryRegisterLocalizedService(_:)``.
-
-
-
-## Callout Service Shorthands
-
-You can easily resolve various service types with these shorthands:
-
-* ``CalloutService/standard(keyboardContext:baseService:localizedServices:feedbackService:)``
-* ``CalloutService/localized(_:)``, e.g. `.localized(.German(...))` (👑 Pro)
-* ``CalloutService/localized(for:)``, e.g. `.localized(for: .swedish)` (👑 Pro)
-* ``CalloutService/disabled``
-* ``CalloutService/preview``
 
 
 
@@ -109,9 +97,9 @@ This will make KeyboardKit use your custom implementation instead of the standar
 
 ## How to customize the callouts for a specific locale
 
-If a service inherits ``Callouts/StandardService``, you can use ``CalloutService/tryRegisterLocalizedService(_:)`` or the ``Keyboard/Services`` convenient ``Keyboard/Services/tryRegisterLocalizedCalloutService(_:)`` to register a custom service for a certain ``KeyboardLocale``.
+Service that inherit ``Callouts/StandardService`` can use ``CalloutService/tryRegisterLocalizedService(_:)`` or the ``Keyboard/Services`` convenient ``Keyboard/Services/tryRegisterLocalizedCalloutService(_:)`` to register a custom service for a certain locale.
 
-For instance, this is how you could make KeyboardKit Pro use  a custom service for ``KeyboardLocale/german``:
+For instance, this is how you could make KeyboardKit Pro use  a custom service for ``Locale/german``:
 
 ```swift
 class MyCustomGermanService: KeyboardLayout.ProService.German { ... } 
@@ -183,7 +171,7 @@ You can access any localized service in your license like this, after successful
 let service = try Callouts.ProService.Swedish()
 ```
 
-> Important: These services will throw a license error if their locales are not included in the license.
+> Important: Localized pro services will throw a license error if their locales are not included in the license.
 
 
 ### How to customize a Pro service

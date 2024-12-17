@@ -37,17 +37,19 @@ public extension Keyboard {
 
 
         /// The keyboard action handler to use.
-        public lazy var actionHandler: KeyboardActionHandler = KeyboardAction.StandardHandler(
-            controller: nil,
+        public lazy var actionHandler: KeyboardActionHandler = .standard(
+            for: nil,
             keyboardContext: state.keyboardContext,
             keyboardBehavior: keyboardBehavior,
             autocompleteContext: state.autocompleteContext,
+            autocompleteService: autocompleteService,
             feedbackContext: state.feedbackContext,
             feedbackService: feedbackService,
             spaceDragGestureHandler: spaceDragGestureHandler
         ) {
             didSet { setupCalloutContextForServices() }
         }
+
 
         /// The autocomplete service to use.
         public lazy var autocompleteService: AutocompleteService = .disabled {
@@ -66,7 +68,7 @@ public extension Keyboard {
         }
 
         /// The dictation service to use.
-        public lazy var dictationService: KeyboardDictationService = .disabled(
+        public lazy var dictationService: DictationService = .disabled(
             context: state.dictationContext
         )
 
@@ -80,7 +82,7 @@ public extension Keyboard {
         ) {
             didSet {
                 guard let handler = actionHandler as? KeyboardAction.StandardHandler else { return }
-                handler.keyboardBehavior = keyboardBehavior
+                handler.behavior = keyboardBehavior
             }
         }
 
@@ -102,33 +104,6 @@ public extension Keyboard {
         public lazy var styleService: KeyboardStyleService = KeyboardStyle.StandardService(
             keyboardContext: state.keyboardContext
         )
-
-
-        // MARK: - Deprecated
-
-        @available(*, deprecated, renamed: "autocompleteService")
-        public var autocompleteProvider: AutocompleteService {
-            get { autocompleteService }
-            set { autocompleteService = newValue }
-        }
-
-        @available(*, deprecated, renamed: "calloutService")
-        public var calloutActionProvider: CalloutService {
-            get { calloutService }
-            set { calloutService = newValue }
-        }
-
-        @available(*, deprecated, renamed: "layoutService")
-        public var layoutProvider: KeyboardLayoutService {
-            get { layoutService }
-            set { layoutService = newValue }
-        }
-
-        @available(*, deprecated, renamed: "styleService")
-        public var styleProvider: KeyboardStyleService {
-            get { styleService }
-            set { styleService = newValue }
-        }
     }
 }
 
@@ -179,8 +154,9 @@ public extension Keyboard.Services {
 
     // Setup the action handler for the provided controller.
     func setupActionHandler(for controller: KeyboardInputViewController) {
+        guard let handler = actionHandler as? KeyboardAction.StandardHandler else { return }
         weak var weakController = controller
-        (actionHandler as? KeyboardAction.StandardHandler)?.keyboardController = weakController
+        handler.keyboardController = weakController
     }
 
     // Setup space gestures for the provided controller.

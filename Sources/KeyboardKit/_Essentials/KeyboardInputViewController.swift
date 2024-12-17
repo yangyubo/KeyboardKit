@@ -42,10 +42,8 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        setupContexts()
         setupInitialWidth()
         setupLocaleObservation()
-        viewWillRegisterSharedController()
     }
 
     open override func viewWillAppear(_ animated: Bool) {
@@ -83,12 +81,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
                 await updateLastDictationError(error)
             }
         }
-    }
-
-    /// DEPRECATED: This will be removed in KeyboardKit 9.0.
-    open func viewWillRegisterSharedController() {
-        KeyboardUrlOpenerInternal.controller = self         // TODO: Remove in KeyboardKit 9.0
-        Keyboard.NextKeyboardController.shared = self       // TODO: Remove in KeyboardKit 9.0
     }
 
     /// This function is called when the controller is about
@@ -174,31 +166,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     }
 
 
-    // MARK: - Deprecated
-
-    @available(*, deprecated, message: "Use the setupPro licenseError parameter instead.")
-    public var setupProError: Error?
-
-    @available(*, deprecated, renamed: "viewWillSetupKeyboardView()")
-    open func viewWillSetupKeyboard() {
-        viewWillSetupKeyboardView()
-    }
-
-    @available(*, deprecated, renamed: "setupKeyboardView(_:)")
-    open func setup<Content: View>(
-        with view: @autoclosure @escaping () -> Content
-    ) {
-        setup(withRootView: Keyboard.RootView(view))
-    }
-
-    @available(*, deprecated, renamed: "setupKeyboardView(_:)")
-    open func setup<Content: View>(
-        with view: @escaping (_ controller: KeyboardInputViewController) -> Content
-    ) {
-        setupKeyboardView(view)
-    }
-
-
     // MARK: - Combine
 
     var cancellables = Set<AnyCancellable>()
@@ -213,32 +180,23 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
     /// The text document proxy that is currently active.
     open override var textDocumentProxy: UITextDocumentProxy {
-        textInputProxy ?? originalTextDocumentProxy
+        state.keyboardContext.textInputProxy ?? originalTextDocumentProxy
     }
 
-    /// A custom text input proxy that can be set to replace
-    /// the ``textDocumentProxy``.
-    public var textInputProxy: UITextDocumentProxy? {
-        didSet { viewWillSyncWithContext() }
-    }
+    @available(*, deprecated, message: "Migration Deprecation, will be removed in 9.1! Use keyboard context instead.")
+    public var textInputProxy: UITextDocumentProxy?
 
 
     // MARK: - Keyboard Properties
 
-    /// The default set of keyboard-specific services.
+    /// Keyboard-specific services.
     public lazy var services: Keyboard.Services = {
         let instance = Keyboard.Services(state: state)
         instance.setup(for: self)
         return instance
     }()
 
-    /// The default set of keyboard-specific settings.
-    public lazy var settings: Keyboard.Settings = {
-        let instance = Keyboard.Settings()
-        return instance
-    }()
-
-    /// The default set of keyboard-specific state.
+    /// Keyboard-specific state.
     public lazy var state: Keyboard.State = {
         let instance = Keyboard.State()
         instance.setup(for: self)
@@ -262,7 +220,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     open override func textWillChange(_ textInput: UITextInput?) {
         super.textWillChange(textInput)
         state.keyboardContext.syncTextDocumentProxy(with: self)
-        state.keyboardContext.syncTextInputProxy(with: self)
     }
     
     open override func textDidChange(_ textInput: UITextInput?) {
@@ -276,7 +233,7 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     /// give the text document proxy time to update itself.
     open func textDidChangeAsync(_ textInput: UITextInput?) {
         performAutocomplete()
-        tryChangeToPreferredKeyboardTypeAfterTextDidChange()
+        setKeyboardCase(state.keyboardContext.preferredKeyboardCase)
     }
 
 
@@ -310,7 +267,13 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
         state.keyboardContext.selectNextLocale()
     }
 
+    open func setKeyboardCase(_ case: Keyboard.KeyboardCase) {
+        guard `case` != state.keyboardContext.keyboardCase else { return }
+        state.keyboardContext.keyboardCase = `case`
+    }
+
     open func setKeyboardType(_ type: Keyboard.KeyboardType) {
+        guard type != state.keyboardContext.keyboardType else { return }
         state.keyboardContext.keyboardType = type
     }
 
@@ -352,51 +315,31 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
     /// The text to use when performing autocomplete.
     ///
-    /// ``UIKit/UITextDocumentProxy/currentWordPreCursorPart``
-    /// is used by default. You can override the function to
+    /// All available text before the text input cursor will
+    /// be used by default. You can override the function to
     /// change which text to use.
     open var autocompleteText: String? {
-        textDocumentProxy.currentWordPreCursorPart
+        textDocumentProxy.documentContextBeforeInput
     }
 
     /// Whether or not autocomple is enabled.
     ///
-    /// This property will by default base its value on both
-    /// ``AutocompleteContext/isAutocompleteEnabled`` and on
-    /// ``KeyboardContext/prefersAutocomplete``, where these
-    /// must both be true for this to be true.
+    /// The property aggregates several data sources such as
+    /// checking the ``AutocompleteContext`` settings and if
+    /// any ongoing operations should temporarily disable it.
     open var isAutocompleteEnabled: Bool {
-        guard
-            state.keyboardContext.prefersAutocomplete,
-            state.autocompleteContext.isAutocompleteEnabled
-        else { return false }
+        let settings = state.autocompleteContext.settings
+        guard settings.isAutocompleteEnabled else { return false }
         return !textDocumentProxy.isReadingFullDocumentContext
     }
 
     /// Perform an autocomplete operation.
     open func performAutocomplete() {
         guard isAutocompleteEnabled else { return }
-        let text = autocompleteText
+        let text = autocompleteText ?? ""
         let context = state.autocompleteContext
         let service = services.autocompleteService
-        Task {
-            do {
-                let suggestions = try await service.autocompleteSuggestions(for: autocompleteText ?? "")
-                var nextCharacterPredictions: [Character: Double] = [:]
-                if context.isNextCharacterPredictionEnabled {
-                    nextCharacterPredictions = try await service.nextCharacterPredictions(
-                        forText: text ?? "",
-                        suggestions: suggestions
-                    )
-                }
-                updateAutocompleteContext(
-                    with: suggestions,
-                    nextCharacterPredictions: nextCharacterPredictions
-                )
-            } catch {
-                updateAutocompleteContext(with: error)
-            }
-        }
+        service.autocomplete(text, updating: context)
     }
 
     /// Reset the current autocomplete state.
@@ -411,9 +354,8 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     public func performDictation() {
         Task {
             do {
-                let config = state.dictationContext.keyboardConfiguration
                 try await services.dictationService
-                    .startDictationFromKeyboard(with: config)
+                    .startDictationFromKeyboard()
             } catch {
                 await updateLastDictationError(error)
             }
@@ -424,30 +366,6 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 // MARK: - Private Functions
 
 private extension KeyboardInputViewController {
-
-    func tryChangeToPreferredKeyboardTypeAfterTextDidChange() {
-        let shouldSwitch = services.keyboardBehavior.shouldSwitchToPreferredKeyboardTypeAfterTextDidChange()
-        guard shouldSwitch else { return }
-        setKeyboardType(state.keyboardContext.preferredKeyboardType)
-    }
-
-    /// Update the autocomplete context with an error.
-    func updateAutocompleteContext(with error: Error) {
-        DispatchQueue.main.async { [weak self] in
-            self?.state.autocompleteContext.lastError = error
-        }
-    }
-    
-    /// Update the autocomplete context with new suggestions.
-    func updateAutocompleteContext(
-        with result: [Autocomplete.Suggestion],
-        nextCharacterPredictions: [Character: Double]
-    ) {
-        DispatchQueue.main.async { [weak self] in
-            self?.state.autocompleteContext.nextCharacterPredictions = nextCharacterPredictions
-            self?.state.autocompleteContext.suggestionsFromService = result
-        }
-    }
     
     /// Update the last received dictation error.
     func updateLastDictationError(_ error: Error) async {

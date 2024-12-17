@@ -106,12 +106,12 @@ class KeyboardStyle_StandardServiceTests: XCTestCase {
     func testButtonFontSizeIsDefinedForActionsWithImage() {
         XCTAssertEqual(buttonFontSize(for: .keyboardType(.email)), 20)
         XCTAssertEqual(buttonFontSize(for: .keyboardType(.emojis)), 20)
-        XCTAssertEqual(buttonFontSize(for: .shift(currentCasing: .lowercased)), 20)
+        XCTAssertEqual(buttonFontSize(for: .shift(.lowercased)), 20)
         XCTAssertEqual(buttonFontSize(for: .backspace), 20)
     }
 
     func testButtonFontSizeIsExplicitlyDefinedForSomeActions() {
-        XCTAssertEqual(buttonFontSize(for: .keyboardType(.alphabetic(.lowercased))), 15)
+        XCTAssertEqual(buttonFontSize(for: .keyboardType(.alphabetic)), 15)
         XCTAssertEqual(buttonFontSize(for: .keyboardType(.numeric)), 16)
         XCTAssertEqual(buttonFontSize(for: .keyboardType(.symbolic)), 14)
         XCTAssertEqual(buttonFontSize(for: .primary(.return)), 16)

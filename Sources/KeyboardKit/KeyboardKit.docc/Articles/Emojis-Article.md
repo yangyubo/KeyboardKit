@@ -69,19 +69,13 @@ version.macOS           // 13.3
 version.olderVersions   // [.v14, .v13_1, .v13, .v12_1, ...]
 ```
 
-All this information is used to resolve ``EmojiVersion/unavailableEmojis`` that are unavailable for a certain emoji version in the current runtime:
-
-```swift
-EmojiVersion.v14.unavailableEmojis // 🫨🫸🫷🪿🫎🪼🫏🪽...
-```
-
 ``EmojiCategory`` uses ``EmojiVersion`` to filter out emojis that are unavailable to the current runtime, to only include available emojis.
 
 
 
 ## Unicode Information
 
-The ``Emoji`` enum has unicode-specific properties that can be used for identity and naming:
+The ``Emoji`` enum has unicode-specific properties that can be used for identity and basic, non-localized naming:
 
 ```swift
 Emoji("👍").unicodeIdentifier   // \\N{THUMBS UP SIGN}
@@ -108,11 +102,16 @@ The ``EmojiKeyboard`` will automatically add skin tones as secondary callout act
 
 ## Localization Support
 
-The ``Emoji`` enum can be localized in any supported locale that has defined translations:
+The ``Emoji`` and ``EmojiCategory`` enums can be localized in any locale that has translations:
 
 ```swift
-Emoji("😀").localizedName                  // Grinning Face
-Emoji("😀").localizedName(for: .swedish)   // Leende Ansikte
+let emoji = Emoji("😀") 
+emoji.localizedName                   // Grinning Face
+emoji.localizedName(in: .swedish)     // Leende Ansikte
+
+let category = EmojiCategory.animalsAndNature 
+category.localizedName                // Animals & Nature
+category.localizedName(in: .swedish)  // Djur och natur
 ```
 
 Take a look at `Resources/en.lproj/Localizable.strings` to see how you can localize emojis for more keyboard locales.
@@ -143,16 +142,28 @@ There are String & Character extensions that can be used to detect and handle em
     
     @Tab("EmojiKeyboard") {
         
-        The ``EmojiKeyboard`` component mimics a native emoji keyboard, with support for categories, skin tones, etc. It uses many additional views that are unlocked by KeyboardKit Pro, such as the title, grid, and menu. These views can be used individually as well. 
-        
         @Row {
-            @Column {}
-            @Column(size: 4) {
+            @Column {
                 ![Emoji Keyboard](emojikeyboard)
             }
-            @Column {}
+            @Column {
+                The ``EmojiKeyboard`` mimics a native emoji keyboard. It has support for categories, skin tones, callouts, etc.
+                
+                The view can be styled with an emoji-specific ``Emoji/KeyboardStyle``, which can be applied with the ``SwiftUICore/View/emojiKeyboardStyle(_:)`` view modifier. Use the builder-based style modifier to generate styles at runtime, based on the keyboard context.
+                
+                If you don't apply a custom style builder, the style will default to a memory optimized style for iPhones and a standard one for iPads.
+                
+                > Important: Make sure to use memory optimized style for all devices if the keyboard uses a lot of memory, e.g. by using a big ML model.
+            }
         }
-        
-        The view can be styled with an ``EmojiKeyboardStyle``, which can be applied with the ``SwiftUICore/View/emojiKeyboardStyle(_:)`` view modifier.
     }
 }
+
+This is how you can apply a memory optimized Emoji keyboard style for all device types, to help save memory when rendering emojis:
+
+```swift
+YourView(...)
+    .emojiKeyboardStyle { context in
+        .optimized(for: context)    // This will apply an optimized style regardless of the context.
+    }
+```

@@ -8,15 +8,38 @@
 
 import Foundation
 
+public extension CalloutService where Self == Callouts.StandardService {
+
+    /// Create a ``Callouts/StandardService`` instance.
+    ///
+    /// - Parameters:
+    ///   - keyboardContext: The keyboard context to use.
+    ///   - baseService: The base service to use, by default a ``Callouts/BaseService``.
+    ///   - localizedServices: A list of localized services, by default `empty`.
+    ///   - feedbackService: The feedback service to use.
+    static func standard(
+        keyboardContext: KeyboardContext,
+        baseService: CalloutService = Callouts.BaseService(),
+        localizedServices: [Self.LocalizedCalloutService] = [],
+        feedbackService: FeedbackService? = nil
+    ) -> Self {
+        Callouts.StandardService(
+            keyboardContext: keyboardContext,
+            baseService: baseService,
+            localizedServices: localizedServices,
+            feedbackService: feedbackService
+        )
+    }
+}
+
 extension Callouts {
     
     /// This service class provides a standard way to handle
     /// keyboard callouts.
     ///
     /// This class can register ``localizedServices``, which
-    /// will then be used to resolve actions for the locales
-    /// they specify. If a ``KeyboardLocale`` is not handled
-    /// by these locales the ``baseService`` is used.
+    /// will then be used instead of ``baseService`` for the
+    /// locales it specifies.
     ///
     /// KeyboardKit automatically creates an instance of the
     /// class when the keyboard is launched, then injects it
@@ -67,10 +90,10 @@ extension Callouts {
         public private(set) var baseService: CalloutService
 
         /// This dictionary contains localized services.
-        public var localizedServices: KeyboardLocale.Dictionary<CalloutService>
+        public var localizedServices: Locale.Dictionary<CalloutService>
 
         /// This resolver is used to lazily resolve services.
-        public static var localizedServiceResolver: ((KeyboardLocale) -> CalloutService?)?
+        public static var localizedServiceResolver: ((Locale) -> CalloutService?)?
 
         
         // MARK: - CalloutService
@@ -109,84 +132,12 @@ extension Callouts {
         open func service(
             for locale: Locale
         ) -> CalloutService {
-            let locale = KeyboardLocale(for: locale) ?? .english
             if let service = localizedServices.value(for: locale) { return service }
             if let service = Self.localizedServiceResolver?(locale) {
-                localizedServices.dictionary[locale.localeIdentifier] = service
+                localizedServices.dictionary[locale.identifier] = service
                 return service
             }
             return baseService
-        }
-
-
-        // MARK: - Deprecated
-
-        @available(*, deprecated, message: "Use the baseService initializer instead.")
-        @_disfavoredOverload
-        public convenience init(
-            keyboardContext: KeyboardContext,
-            baseProvider: CalloutService
-        ) {
-            self.init(
-                keyboardContext: keyboardContext,
-                baseService: baseProvider,
-                localizedServices: []
-            )
-        }
-
-        @available(*, deprecated, message: "Use the baseService initializer instead.")
-        @_disfavoredOverload
-        public convenience init(
-            keyboardContext: KeyboardContext,
-            localizedProviders: [LocalizedProvider]
-        ) {
-            self.init(
-                keyboardContext: keyboardContext,
-                baseService: Callouts.BaseService(),
-                localizedServices: localizedProviders
-            )
-        }
-
-        @available(*, deprecated, renamed: "LocalizedCalloutService")
-        public typealias LocalizedProvider = CalloutService & LocalizedService
-
-        @available(*, deprecated, renamed: "baseService")
-        public private(set) var baseProvider: CalloutService {
-            get { baseService }
-            set { baseService = newValue }
-        }
-
-        @available(*, deprecated, renamed: "localizedServices")
-        public var localizedProviders: KeyboardLocale.Dictionary<CalloutService> {
-            get { localizedServices }
-            set { localizedServices = newValue }
-        }
-
-        @available(*, deprecated, renamed: "localizedServiceResolver")
-        public static var localizedProviderResolver: ((KeyboardLocale) -> CalloutService?)? {
-            get { localizedServiceResolver }
-            set { localizedServiceResolver = newValue }
-        }
-
-        @available(*, deprecated, renamed: "service(for:)")
-        open func calloutActionProvider(
-            for context: KeyboardContext
-        ) -> CalloutService {
-            service(for: context)
-        }
-        
-        @available(*, deprecated, renamed: "service(for:)")
-        open func calloutActionProvider(
-            for locale: Locale
-        ) -> CalloutService {
-            service(for: locale)
-        }
-        
-        @available(*, deprecated, renamed: "registerLocalizedService")
-        open func registerLocalizedProvider(
-            _ service: LocalizedCalloutService
-        ) {
-            localizedServices.set(service, for: service.localeKey)
         }
     }
 }

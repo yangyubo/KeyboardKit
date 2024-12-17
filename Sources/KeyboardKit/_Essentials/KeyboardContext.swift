@@ -18,61 +18,37 @@ import UIKit
 ///
 /// This class syncs with ``KeyboardInputViewController`` to
 /// keep up to date. It's extensively used in the library to
-/// make state-based decisions.
-///
-/// The class can actively affect the keyboard. For instance,
-/// setting the ``keyboardType`` will cause a ``KeyboardView``
-/// to automatically rendered supported keyboard types.
+/// make state-based decisions, and automatically update the
+/// ``KeyboardView`` whenever the context changes.
 ///
 /// You can use ``locale`` to get and set the current locale
-/// or use ``KeyboardLocale``-based properties and functions
-/// for more convenience. If ``locales`` has multiple values,
-/// ``selectNextLocale()`` will toggle through these locales.
+/// or use ``Locale``-based properties and functions. If the
+/// ``locales`` or `` addedLocales`` properties have multiple
+/// values, ``selectNextLocale()`` will toggle through these,
+/// where ``addedLocales`` is used over ``locales``.
+///
+/// This class also has observable auto-persisted ``settings``
+/// that can be used to configure the behavior and presented
+/// to users in e.g. a settings screen.
 ///
 /// KeyboardKit will automatically setup an instance of this
 /// class in ``KeyboardInputViewController/state``, then use
-/// it as global state and inject it as an environment value
-/// into the view hierarchy.
+/// it as global state and inject it as an environment value.
 public class KeyboardContext: ObservableObject {
 
     public init() {
+        settings = .init()
+        settings = .init(onAutocapitalizationEnabledChanged: syncAutocapitalizationWithSetting)
         syncAutocapitalizationWithSetting()
-        locale = .init(identifier: localeIdentifier)
+        locale = .init(identifier: settings.localeIdentifier)
     }
 
 
     // MARK: - Settings
 
-    /// The settings key prefix to use for this namespace.
-    public static var settingsPrefix: String {
-        KeyboardSettings.storeKeyPrefix(for: "keyboard")
-    }
-
-    /// A list of explicitly added locale identifiers, which
-    /// shouldn't be confused with all available ``locales``.
-    ///
-    /// The ``selectNextLocale()`` function and context menu
-    /// will use this list if it has locales, else ``locales``.
-    ///
-    /// Stored in ``Foundation/UserDefaults/keyboardSettings``.
-    @AppStorage("\(settingsPrefix)addedLocaleIdentifiers", store: .keyboardSettings)
-    public var addedLocaleIdentifiersValue: Keyboard.StorageValue<[String]> = .init(value: [])
-
-    /// Whether autocapitalization is enabled.
-    ///
-    /// Stored in ``Foundation/UserDefaults/keyboardSettings``.
-    @AppStorage("\(settingsPrefix)isAutocapitalizationEnabled", store: .keyboardSettings)
-    public var isAutocapitalizationEnabled = true {
-        didSet { syncAutocapitalizationWithSetting() }
-    }
-
-    /// The locale identifier that is currently being used.
-    ///
-    /// Use ``locale`` or any locale setter to set this.
-    ///
-    /// Stored in ``Foundation/UserDefaults/keyboardSettings``.
-    @AppStorage("\(settingsPrefix)localeIdentifier", store: .keyboardSettings)
-    public private(set) var localeIdentifier = Locale.current.identifier
+    /// Keyboard-specific, auto-persisted settings.
+    @Published
+    public var settings: Settings
 
 
     // MARK: - Temporary overrides
@@ -88,9 +64,17 @@ public class KeyboardContext: ObservableObject {
 
     // MARK: - Published Properties
 
+    /// The app for which the context is set up, if any.
+    @Published
+    public var app: KeyboardApp?
+
     /// The current device type.
     @Published
     public var deviceType: DeviceType = .current
+
+    /// The current device type to use for keyboard visualization.
+    @Published
+    public var deviceTypeForKeyboard: DeviceType = .current
 
     /// Whether or not the keyboard has a dictation key.
     @Published
@@ -107,12 +91,6 @@ public class KeyboardContext: ObservableObject {
     /// The current interface orientation.
     @Published
     public var interfaceOrientation: InterfaceOrientation = .portrait
-
-    @available(*, deprecated, renamed: "isAutocapitalizationEnabled")
-    public var isAutoCapitalizationEnabled: Bool {
-        get { isAutocapitalizationEnabled }
-        set { isAutocapitalizationEnabled = newValue }
-    }
 
     /// Whether or not the keyboard is in floating mode.
     @Published
@@ -133,13 +111,17 @@ public class KeyboardContext: ObservableObject {
         }
     }
 
+    /// The keyboard case that is currently used.
+    @Published
+    public var keyboardCase = Keyboard.KeyboardCase.auto
+
     /// An optional dictation replacement action.
     @Published
     public var keyboardDictationReplacement: KeyboardAction?
 
     /// The keyboard type that is currently used.
     @Published
-    public var keyboardType = Keyboard.KeyboardType.alphabetic(.auto)
+    public var keyboardType = Keyboard.KeyboardType.alphabetic
 
     /// The current locale.
     ///
@@ -147,10 +129,7 @@ public class KeyboardContext: ObservableObject {
     /// and cause it to persist.
     @Published
     public var locale = Locale.current {
-        didSet {
-            guard localeIdentifier != locale.identifier else { return }
-            localeIdentifier = locale.identifier
-        }
+        didSet { settings.updateLocaleIdentifier(locale.identifier) }
     }
 
     /// The locales that are currently available.
@@ -208,7 +187,7 @@ public class KeyboardContext: ObservableObject {
     @Published
     public var textInputMode: UITextInputMode?
 
-    /// The input controller's current trait collection.
+    /// The current trait collection.
     @Published
     public var traitCollection = UITraitCollection()
     #endif
